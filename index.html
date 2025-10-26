@@ -1,73 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jud Web Demo</title>
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-  <!-- Video background -->
-  <video id="background-video" autoplay muted loop playsinline>
-    <source src="images/JudBackground.mp4" type="video/mp4" />
-  </video>
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Judith Bernat — Portfolio</title>
+    <link rel="preload" href="/fonts/straight-narrow.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <button class="home-button" data-route="#/">JUDITH BERNAT</button>
+    </header>
 
-  <!-- Navigation -->
-  <nav>
-    <a href="#about">about</a>
-    <a href="#projects">projects</a>
-    <a href="#contact">contact</a>
-  </nav>
+    <!-- Canvas background for home graph -->
+    <canvas id="graph-canvas" class="graph-canvas" aria-hidden="true"></canvas>
+    <!-- Cursor overlay (drawn above everything, click-through) -->
+    <canvas id="cursor-canvas" class="cursor-canvas" aria-hidden="true"></canvas>
 
-  <!-- Landing -->
-  <section id="landing">
-    <h1>
-      <div>Visuals</div>
-      <div>Interactivity</div>
-      <div>New Media</div>
-    </h1>
-  </section>
+    <!-- Main SPA outlet -->
+    <main id="app" class="app"></main>
 
-  <!-- About -->
-  <section id="about">
-    <p>
-        I’m Judith — a multidisciplinary artist, visual designer, and creative technologist based in Barcelona. My work lies at the intersection of art, technology, and sensory storytelling, combining creative coding, new media, artificial intelligence, video production, and live-mixing tools. I’m driven by deep curiosity, an adventurous spirit, a playful yet critical eye, and a genuine connection to nature and spirituality.
-        I studied at the Faculty of Design and Engineering at Elisava and at Strate École de Design (Paris), complementing my education with an official degree in Stage Techniques and Control at CIFO (Barcelona), and a Master’s in New Media specializing in multimedia design for entertainment in Madrid.
-        Throughout my career, I’ve collaborated with collectives and institutions such as Telenoika, Mapping World Lab, Chounar, and Punto Singular, developing video mapping installations, stage lighting, DMX systems, and experiential marketing productions. As a VJ, I’ve performed at venues including Sala Apolo, Upload for Nitsa, and Caníbal, and I currently work as a video technician at Sala Razzmatazz.
-        I also co-develop AlgoLab, an artistic lab with Veronika Gryshchuk, where we explore new media-based projects addressing current social and technological themes. Our work involves sci-tech research, focusing particularly on conceptualizing the tensions between contemporary society and emerging technologies.
-        My approach sees design as a tool for communication and connection, creating immersive and interactive experiences where the digital engages in dialogue with the human and more-than-human — from perception to emotion. I’m passionate about using cutting-edge technological tools to bring meaningful and innovative ideas to life.
-    </p>
-  </section>
+    <!-- Footer with live cursor coordinates -->
+    <footer class="site-footer" aria-hidden="true">
+      <div id="cursor-xy" class="cursor-xy">X _ Y</div>
+    </footer>
 
-  <!-- Projects -->
-  <section id="projects">
-    <div class="project-grid">
-      <div class="project-card">Visuals</div>
-      <div class="project-card">Installations</div>
-      <div class="project-card">ALGOlab</div>
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact">
-    <div id="contact-details">
-      IG: @judbernal<br />
-      IN: Judith Bernal<br />
-      TEL: +34&nbsp;608551152<br />
-      judbernal@gmail.com
-    </div>
-  </section>
-
-  <script>
-    // Optional: Smooth scroll for older browsers
-    document.querySelectorAll("nav a").forEach((link) => {
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-        document.querySelector(link.getAttribute("href")).scrollIntoView({
-          behavior: "smooth",
-        });
-      });
-    });
-  </script>
-</body>
-</html>
+    <script type="module" src="/js/main.js"></script>
+  </body>
+  </html>

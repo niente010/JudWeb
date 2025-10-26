@@ -1,140 +1,116 @@
 @font-face {
-  font-family: "Gambarino";
-  src: url("../fonts/Gambarino-Regular.otf") format("opentype");
-  font-weight: normal;
+  font-family: "StraightNarrow";
+  src: url("/fonts/straight-narrow.woff2") format("woff2");
+  font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
-@font-face {
-  font-family: "TheLastCall";
-  src: url("../fonts/TheLastCall-Regular.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
+:root {
+  --bg: #000000;
+  --fg: #00ff66; /* neon green */
+  --fg-dim: #00cc52;
 }
 
-/* Reset basic styles */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
 html, body {
+  margin: 0;
   height: 100%;
-  font-family: "Gambarino", serif;
-  color: #00ff7f;
-  background: transparent; /* let the video show through */
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "StraightNarrow", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  cursor: none; /* hide native cursor, we draw our own */
 }
 
-/* Video background */
-#background-video {
+/* Ensure clickable elements don't re-enable a native cursor */
+a, button, canvas { cursor: none !important; }
+
+/* During drag, keep cursor hidden but add visual feedback via canvas */
+.dragging { cursor: none !important; }
+
+.site-header {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
-}
-
-/* Navigation bar */
-nav {
-  position: fixed;
-  top: 20px;
-  left: 0;
-  width: 100%;
+  right: 0;
+  height: 56px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 60px;
+  justify-content: center;
   z-index: 10;
 }
 
-nav a {
-  text-decoration: none;
-  color: #00ff7f;
-  font-size: 1.1rem;
-  transition: opacity 0.3s;
-}
-
-nav a:hover {
-  opacity: 0.6;
-}
-
-/* Sections */
-section {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 40px;
-  position: relative;
-  z-index: 6; /* stay above grain overlay */
-}
-
-/* Landing headings */
-#landing h1 {
-  font-size: 8vw;
-  line-height: 1;
+.home-button {
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  letter-spacing: 1px;
+  font: inherit;
   text-transform: uppercase;
-  letter-spacing: 5px;
-  margin: 0;
 }
 
-#landing h1 div {
-  font-family: "TheLastCall", sans-serif;
+.home-button:focus-visible {
+  outline: 2px dashed var(--fg);
+  outline-offset: 2px;
 }
 
-#about p {
-  font-size: 1.2rem;
-  max-width: 800px;
-}
-
-/* Projects grid */
-.project-grid {
-  display: flex;
-  gap: 40px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.project-card {
-  border: 3px solid #00ff7f;
-  width: 280px;
-  height: 280px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  text-transform: uppercase;
-  cursor: pointer;
-  background: rgba(0, 0, 0, 0.6);
-  transition: transform 0.3s, background 0.3s;
-}
-
-.project-card:hover {
-  transform: scale(1.05);
-  background: rgba(0, 255, 127, 0.1);
-}
-
-/* Contact section */
-#contact-details {
-  font-size: 1.5rem;
-  line-height: 2.2rem;
-}
-
-/* Simple grain effect overlay using CSS filter */
-body::after {
-  content: "";
+.graph-canvas {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence baseFrequency='0.80' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' /%3E%3C/svg%3E");
-  opacity: 0.15;
-  z-index: 5;
-} 
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
+.cursor-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100; /* on top */
+  pointer-events: none; /* click-through */
+}
+
+.site-footer {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+  z-index: 101;
+  pointer-events: none; /* let clicks pass to canvas */
+}
+
+.cursor-xy {
+  font-size: 12px;
+  opacity: 0.8;
+  letter-spacing: 1px;
+}
+
+.app {
+  position: relative;
+  z-index: 1; /* above canvas */
+  padding-top: 72px; /* keep below header */
+  min-height: 100vh;
+}
+
+.section {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px;
+  line-height: 1.5;
+}
+
+.muted {
+  color: var(--fg-dim);
+}
+
+/* Reduced motion: stop animation but keep layout */
+@media (prefers-reduced-motion: reduce) {
+  .graph-canvas { display: none; }
+}
