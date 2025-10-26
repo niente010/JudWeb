@@ -153,22 +153,87 @@ export function startGraph(canvas) {
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
     const idx = hitTestAtScreen(x, y);
     const n = idx >= 0 ? nodes[idx] : null;
-    if (!n) return;
+    
+    // Click on empty space: go back one hierarchy level
+    if (!n) {
+      if (mode === "project") {
+        // Go back from project to category
+        nodes = nodes.filter(n => n.kind !== "description" && n.kind !== "media");
+        mode = "category";
+        selectedProjectIndex = -1;
+        uiDepthTarget = 2;
+        cameraTargetOffsetX = CAMERA_SHIFT_PER_DEPTH * ctx.canvas.width * uiDepthTarget;
+        // Resume movement for all grandchild nodes (projects)
+        for (let i = 0; i < nodes.length; i++) {
+          if (nodes[i].kind === "grandchild") {
+            nodes[i].targetTimer = 0.01;
+          }
+        }
+      } else if (mode === "category") {
+        // Go back from category to focus (main node view)
+        // Re-enter focus mode to recreate child nodes
+        if (focusKey) {
+          enterFocus(focusKey);
+        }
+      } else if (mode === "focus") {
+        // Go back from focus to home
+        nodes = nodes.filter(n => n.kind !== "child");
+        mode = "home";
+        focusKey = null;
+        selectedCategoryIndex = -1;
+        uiDepthTarget = 0;
+        // FIX: Reset camera AND depth immediately to avoid visual jump
+        uiDepth = 0;
+        cameraTargetOffsetX = 0;
+        cameraOffsetX = 0;
+        // FIX: Reset hoveredNodeIndex so hover is re-triggered
+        hoveredNodeIndex = -1;
+        // Resume movement for main nodes
+        for (let i = 0; i < 3; i++) {
+          nodes[i].targetTimer = 0.01;
+        }
+      } else if (mode === "content") {
+        // Go back from content (ABOUT text) to home
+        nodes = nodes.filter(n => n.kind !== "description" && n.kind !== "aboutDescription");
+        mode = "home";
+        focusKey = null;
+        selectedContentIndex = -1;
+        uiDepthTarget = 0;
+        // FIX: Reset camera AND depth immediately to avoid visual jump
+        uiDepth = 0;
+        cameraTargetOffsetX = 0;
+        cameraOffsetX = 0;
+        // FIX: Reset hoveredNodeIndex so hover is re-triggered
+        hoveredNodeIndex = -1;
+        // Resume movement for main nodes
+        for (let i = 0; i < 3; i++) {
+          nodes[i].targetTimer = 0.01;
+        }
+      }
+      return;
+    }
+    
     if (idx <= 2) {
       // main nodes
       if (n.label === "PROJECTS") {
         enterFocus("PROJECTS");
-      } else if (n.label === "ABOUT" || n.label === "CONTACTS") {
-        // Enter content mode for ABOUT/CONTACTS
-        if (mode === "focus" && focusKey === n.label) {
-          enterContentMode(idx, n.label);
-        } else {
-          enterFocus(n.label);
-        }
+      } else if (n.label === "ABOUT") {
+        // ABOUT: Show text description (single click)
+        enterAboutMode(idx);
+      } else if (n.label === "CONTACTS") {
+        // CONTACTS: Just show contact nodes, no text content
+        enterFocus("CONTACTS");
       } else {
         enterFocus(n.label);
       }
     } else if (n.kind === "child") {
+      // Check if this is a contact node (has URL)
+      if (n.url) {
+        // Open link in new tab
+        window.open(n.url, '_blank');
+        return;
+      }
+      
       // If in project mode, clicking a category should go back to category mode
       if (mode === "project") {
         // Remove content nodes (description and media)
@@ -210,8 +275,8 @@ export function startGraph(canvas) {
         enterProjectMode(idx, n.category, n.slug);
       }
     }
-    // Description and media nodes: start drag
-    if (n.kind === "description" || n.kind === "media") {
+    // Description, aboutDescription, and media nodes: start drag
+    if (n.kind === "description" || n.kind === "aboutDescription" || n.kind === "media") {
       draggedNodeIndex = idx;
       // Calculate offset from node position to click position
       dragOffsetX = x - n.x;
@@ -238,11 +303,11 @@ export function startGraph(canvas) {
         draggedNode.targetX = draggedNode.x;
         draggedNode.targetY = draggedNode.y;
         
-        // Update hover box to follow dragged node
+        // PROBLEMA 3: Update hover box to follow dragged node in real-time
         const cssScaleX = rect.width / canvas.width;
         const cssScaleY = rect.height / canvas.height;
         
-        if (draggedNode.kind === "description" || draggedNode.kind === "textContent") {
+        if (draggedNode.kind === "description" || draggedNode.kind === "aboutDescription" || draggedNode.kind === "textContent") {
           if (draggedNode._boxWidth && draggedNode._boxHeight) {
             let centerX, centerY;
             if (draggedNode.kind === "description") {
@@ -269,7 +334,12 @@ export function startGraph(canvas) {
                   centerY = draggedNode.y;
                   break;
               }
+            } else if (draggedNode.kind === "aboutDescription") {
+              // aboutDescription always uses CENTER anchor
+              centerX = draggedNode.x;
+              centerY = draggedNode.y;
             } else {
+              // textContent
               centerX = draggedNode.x;
               centerY = draggedNode.y;
             }
@@ -333,8 +403,8 @@ export function startGraph(canvas) {
       const cssScaleX = rect.width / canvas.width;
       const cssScaleY = rect.height / canvas.height;
       
-      if (n.kind === "description" || n.kind === "textContent") {
-        // For description/textContent: use CENTER of the box for hover brackets
+      if (n.kind === "description" || n.kind === "aboutDescription" || n.kind === "textContent") {
+        // For description/aboutDescription/textContent: use CENTER of the box for hover brackets
         if (n._boxWidth && n._boxHeight) {
           // Calculate center position based on anchor point
           let centerX, centerY;
@@ -363,6 +433,10 @@ export function startGraph(canvas) {
                 centerY = n.y;
                 break;
             }
+          } else if (n.kind === "aboutDescription") {
+            // aboutDescription always uses CENTER anchor
+            centerX = n.x;
+            centerY = n.y;
           } else {
             // textContent uses center by default
             const screenX = getScreenXForIndex(hitIndex);
@@ -500,11 +574,14 @@ function centralBounds(width, height) {
 function tick(ts) {
   const dt = Math.min(0.05, (ts - lastTimestamp) / 500); //speed
   lastTimestamp = ts;
-   // animate UI depth and camera offset
-   uiDepth += (uiDepthTarget - uiDepth) * 0.2;
-   const width = ctx?.canvas?.width || 0;
-   cameraTargetOffsetX = -width * CAMERA_SHIFT_PER_DEPTH * uiDepth;
-   cameraOffsetX += (cameraTargetOffsetX - cameraOffsetX) * 0.2;
+  // Animate UI depth and camera offset
+  // NOTE: uiDepth animates towards uiDepthTarget
+  uiDepth += (uiDepthTarget - uiDepth) * 0.2;
+  // cameraTargetOffsetX is RECALCULATED every frame based on uiDepth
+  const width = ctx?.canvas?.width || 0;
+  cameraTargetOffsetX = -width * CAMERA_SHIFT_PER_DEPTH * uiDepth;
+  // cameraOffsetX animates towards cameraTargetOffsetX
+  cameraOffsetX += (cameraTargetOffsetX - cameraOffsetX) * 0.2;
   step(dt);
   draw();
   animationHandle = requestAnimationFrame(tick);
@@ -594,8 +671,8 @@ function step(dt) {
       }
     }
     
-    // Description nodes remain completely static - skip all movement logic
-    if (n.kind === "description") {
+    // Description and aboutDescription nodes remain completely static - skip all movement logic
+    if (n.kind === "description" || n.kind === "aboutDescription") {
       continue;
     }
     
@@ -822,6 +899,26 @@ function draw() {
         ctx.stroke();
       }
     }
+    // PROBLEMA 3: Link from ABOUT main node to its aboutDescription
+    if (selectedContentIndex >= 0 && focusKey === "ABOUT") {
+      ctx.globalAlpha = 1;
+      for (let k = 3; k < nodes.length; k++) {
+        const m = nodes[k];
+        if (m.kind !== "aboutDescription" || m.mainIndex !== selectedContentIndex) continue;
+        
+        // Skip if box not yet calculated (prevents flash)
+        if (!m._boxWidth) continue;
+        
+        // Calculate center of the aboutDescription box (always centered anchor)
+        const descCenterX = m.x;
+        const descCenterY = m.y;
+        
+        ctx.beginPath();
+        ctx.moveTo(getScreenXForIndex(selectedContentIndex), nodes[selectedContentIndex].y);
+        ctx.lineTo(descCenterX, descCenterY);
+        ctx.stroke();
+      }
+    }
   }
 
   // Nodes (vertical rectangle + label on the right)
@@ -859,6 +956,7 @@ function draw() {
     } else if (mode === "content") {
       if (isMain) nodeAlpha = i === selectedContentIndex ? 1 : MAIN_DIM_ALPHA;
       else if (n.kind === "textContent") nodeAlpha = n.parentIndex === selectedContentIndex ? 1 : MAIN_DIM_ALPHA;
+      else if (n.kind === "aboutDescription") nodeAlpha = n.mainIndex === selectedContentIndex ? 1 : MAIN_DIM_ALPHA;
     }
 
     // Font size per hierarchy/mode
@@ -966,6 +1064,44 @@ function draw() {
         // Draw text with proper baseline
         ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim();
         ctx.textBaseline = "top"; // Use top baseline for consistent padding
+        const startY = dy + DESC_TEXT_PADDING;
+        wrappedLines.forEach((line, i) => {
+          ctx.fillText(line, dx + DESC_TEXT_PADDING, startY + i * DESC_TEXT_LINE_HEIGHT);
+        });
+      }
+      ctx.restore();
+    } else if (n.kind === "aboutDescription") {
+      // About Description nodes: text with adaptive box, CENTERED on screen
+      ctx.save();
+      ctx.globalAlpha = nodeAlpha;
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim();
+      ctx.font = `${DESC_TEXT_FONT_SIZE * dpr}px StraightNarrow, sans-serif`;
+      
+      if (n.description) {
+        // Wrap text and calculate box size based on actual content
+        const wrappedLines = wrapText(ctx, n.description, DESC_TEXT_MAX_WIDTH);
+        const boxSize = calculateTextBoxSize(ctx, wrappedLines, DESC_TEXT_LINE_HEIGHT, DESC_TEXT_PADDING);
+        
+        // Cache box dimensions on node for hit testing
+        const isFirstFrame = !n._boxWidth;
+        if (!n._boxWidth || n._boxWidth !== boxSize.width) {
+          n._boxWidth = boxSize.width;
+          n._boxHeight = boxSize.height;
+        }
+        
+        // Skip rendering on first frame to avoid flash
+        if (isFirstFrame) {
+          ctx.restore();
+          continue;
+        }
+        
+        // PROBLEMA 2: Always use CENTER anchor for aboutDescription
+        const dx = n.x - n._boxWidth / 2;
+        const dy = n.y - n._boxHeight / 2;
+        
+        // Draw text with proper baseline
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim();
+        ctx.textBaseline = "top";
         const startY = dy + DESC_TEXT_PADDING;
         wrappedLines.forEach((line, i) => {
           ctx.fillText(line, dx + DESC_TEXT_PADDING, startY + i * DESC_TEXT_LINE_HEIGHT);
@@ -1139,12 +1275,13 @@ function getScreenXForIndex(i) {
     if ((n?.kind === "media" || n?.kind === "description") && n.projectIndex === selectedProjectIndex) return nodes[i].x;
     return nodes[i].x + cameraOffsetX;
   }
-  // In content: anchor the selected main and its textContent node
+  // In content: anchor the selected main and its textContent/aboutDescription node
   if (mode === "content") {
     const n = nodes[i];
     if (i === selectedContentIndex) return nodes[i].x; // anchor selected main
-    // also anchor its textContent node so it stays with the main
+    // also anchor its textContent/aboutDescription node so it stays with the main
     if (n?.kind === "textContent" && n.parentIndex === selectedContentIndex) return nodes[i].x;
+    if (n?.kind === "aboutDescription" && n.mainIndex === selectedContentIndex) return nodes[i].x;
     return nodes[i].x + cameraOffsetX;
   }
   return nodes[i].x + cameraOffsetX;
@@ -1277,6 +1414,13 @@ function hitTestAtScreen(px, py) {
         }
         if (px >= dx && px <= dx + n._boxWidth && py >= dy && py <= dy + n._boxHeight) return i;
       }
+    } else if (n.kind === "aboutDescription") {
+      // aboutDescription nodes hit area - always CENTER anchor
+      if (n._boxWidth && n._boxHeight) {
+        const dx = n.x - n._boxWidth / 2;
+        const dy = n.y - n._boxHeight / 2;
+        if (px >= dx && px <= dx + n._boxWidth && py >= dy && py <= dy + n._boxHeight) return i;
+      }
     } else if (n.kind === "textContent") {
       // TextContent nodes hit area (use cached dimensions from actual content)
       if (n._boxWidth && n._boxHeight) {
@@ -1370,6 +1514,28 @@ function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 function lerp(a, b, t) { return a + (b - a) * t; }
 
 async function enterFocus(which) {
+  // TOGGLE: If already in focus mode with the same key, close it
+  if (mode === "focus" && focusKey === which) {
+    // Close focus and return to home
+    nodes = nodes.slice(0, 3); // Remove all child nodes
+    mode = "home";
+    focusKey = null;
+    selectedCategoryIndex = -1;
+    selectedProjectIndex = -1;
+    uiDepthTarget = 0;
+    // FIX: Reset camera AND depth immediately to avoid visual jump
+    uiDepth = 0;
+    cameraTargetOffsetX = 0;
+    cameraOffsetX = 0;
+    // FIX: Reset hoveredNodeIndex so hover is re-triggered on the node we just clicked
+    hoveredNodeIndex = -1;
+    // Resume movement for main nodes
+    for (let i = 0; i < 3; i++) {
+      nodes[i].targetTimer = 0.01;
+    }
+    return;
+  }
+
   mode = "focus";
   focusKey = which;
   selectedCategoryIndex = -1;
@@ -1397,12 +1563,8 @@ async function enterFocus(which) {
       nodes.push(createChildNode(cats[i].toUpperCase(), `#/projects/${cats[i]}`, c.x, c.y, "PROJECTS"));
     }
   } else if (which === "CONTACTS") {
-    // Create contact method nodes for CONTACTS
-    const contacts = [
-      { name: "Instagram", slug: "instagram1" },
-      { name: "Algolab", slug: "instagram2" },
-      { name: "Mail", slug: "mail" }
-    ];
+    // Load contact method nodes from JSON
+    const contacts = await loadContacts();
     const anchor = nodes[mainNodeIndexes.CONTACTS];
     const step = (2 * CHILD_SECTOR_HALF_ANGLE) / Math.max(1, (contacts.length - 1) || 1);
     const r = CHILD_RING_RADIUS;
@@ -1412,7 +1574,10 @@ async function enterFocus(which) {
       let x = anchor.x + Math.cos(ang) * r + CHILD_X_OFFSET;
       let y = anchor.y + Math.sin(ang) * r;
       const c = clampToBounds(x, y, centralBounds(ctx.canvas.width, ctx.canvas.height));
-      nodes.push(createChildNode(contacts[i].name.toUpperCase(), `#/contacts/${contacts[i].slug}`, c.x, c.y, "CONTACTS"));
+      // Create child node with URL for opening links
+      const contactNode = createChildNode(contacts[i].name.toUpperCase(), `#/contacts/${contacts[i].slug}`, c.x, c.y, "CONTACTS");
+      contactNode.url = contacts[i].url; // Add URL for link opening
+      nodes.push(contactNode);
     }
   }
 }
@@ -1640,6 +1805,77 @@ async function enterProjectMode(projectIndex, categorySlug, projectSlug) {
   }
 }
 
+async function enterAboutMode(mainIndex) {
+  // PROBLEMA 2: If already in about mode, TOGGLE (close it)
+  if (mode === "content" && focusKey === "ABOUT") {
+    // Close about and return to home
+    nodes = nodes.filter(n => n.kind !== "aboutDescription");
+    mode = "home";
+    focusKey = null;
+    selectedContentIndex = -1;
+    uiDepthTarget = 0;
+    // FIX: Reset camera AND depth immediately to avoid visual jump
+    uiDepth = 0;
+    cameraTargetOffsetX = 0;
+    cameraOffsetX = 0;
+    // FIX: Reset hoveredNodeIndex so hover is re-triggered on the node we just clicked
+    hoveredNodeIndex = -1;
+    // Resume movement for main nodes
+    for (let i = 0; i < 3; i++) {
+      nodes[i].targetTimer = 0.01;
+    }
+    return;
+  }
+
+  mode = "content";
+  focusKey = "ABOUT";
+  selectedContentIndex = mainIndex;
+  uiDepthTarget = 1; // similar to focus depth
+  cameraTargetOffsetX = CAMERA_SHIFT_PER_DEPTH * ctx.canvas.width * uiDepthTarget;
+
+  // PROBLEMA 1: Remove ANY previous child nodes (from CONTACTS/PROJECTS)
+  nodes = nodes.slice(0, 3);
+
+  // freeze main nodes
+  for (let i = 0; i < 3; i++) {
+    const n = nodes[i];
+    n.vx = 0; n.vy = 0; n.targetX = n.x; n.targetY = n.y; n.targetTimer = 1e9;
+  }
+
+  // load about text from JSON
+  try {
+    const aboutData = await loadAbout();
+    // Create description node (same as project description)
+    const aboutNode = createAboutDescriptionNode(aboutData.text, mainIndex);
+    nodes.push(aboutNode);
+  } catch (e) {
+    console.error('Error loading about data:', e);
+  }
+}
+
+function createAboutDescriptionNode(text, mainIndex) {
+  // PROBLEMA 2: Position centered on screen instead of using DESC_VIEWPORT ratios
+  const canvasWidth = ctx.canvas.width;
+  const canvasHeight = ctx.canvas.height;
+  
+  // Center position (will be adjusted based on anchor point in draw())
+  let anchorX = canvasWidth / 2;
+  let anchorY = canvasHeight / 2;
+  
+  return {
+    kind: "aboutDescription", // PROBLEMA 3: Different kind to render with center anchor
+    description: text,
+    mainIndex: mainIndex, // Link to ABOUT main node (not projectIndex)
+    x: anchorX,
+    y: anchorY,
+    vx: 0,
+    vy: 0,
+    targetTimer: 1e9, // frozen
+    targetX: anchorX,
+    targetY: anchorY,
+  };
+}
+
 async function enterContentMode(mainIndex, label) {
   mode = "content";
   selectedContentIndex = mainIndex;
@@ -1688,6 +1924,24 @@ async function loadProjects() {
 async function loadProjectsByCategory(cat) {
   const projects = await loadProjects();
   return projects.filter((p) => p.category === cat);
+}
+
+let cachedContacts = null;
+async function loadContacts() {
+  if (!cachedContacts) {
+    const res = await fetch("/data/contacts.json", { cache: "no-store" });
+    cachedContacts = await res.json();
+  }
+  return cachedContacts;
+}
+
+let cachedAbout = null;
+async function loadAbout() {
+  if (!cachedAbout) {
+    const res = await fetch("/data/about.json", { cache: "no-store" });
+    cachedAbout = await res.json();
+  }
+  return cachedAbout;
 }
 
 // --- helpers for anchors and bounds ---

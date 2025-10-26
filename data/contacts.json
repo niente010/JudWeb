@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Instagram",
+    "slug": "instagram",
+    "url": "https://www.instagram.com/judbernalt/"
+  },
+  {
+    "name": "Instagram Algolab",
+    "slug": "instagram-algolab",
+    "url": "https://www.instagram.com/algolab01/"
+  },
+  {
+    "name": "Mail",
+    "slug": "mail",
+    "url": "mailto:judbernalt@gmail.com"
+  }
+]
+
