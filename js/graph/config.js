@@ -93,6 +93,19 @@ export const PROJECT = {
 // Colors (read from CSS custom properties)
 export const COLOR = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim() || "#00ff66";
 
+// Cursor style
+export const CURSOR = {
+  LINE_WIDTH: 2.0, // stroke width
+  SIZE: 10, // px length of each line (base, scaled by DPR)
+  GAP: 3, // px empty zone at center
+  BOTTOM_ANGLE: 100, // degrees between the two bottom lines
+  BRACKET_LENGTH: 16, // px corner bracket length (base, scaled by DPR)
+  BRACKET_OFFSET: 4, // px distance from box edges
+  TRANSITION_MS: 120 // crosshair <-> brackets animation duration
+};
+
+
+
 
 
 

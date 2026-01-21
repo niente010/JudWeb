@@ -31,11 +31,11 @@
     "year": 2024,
     "description": "With the aim of creating visuals all night long at Razzmatazz Club Barcelona, I created a set of generative visuals in TouchDesigner with an abstract and geometric aesthetic. \n Together with my colleagues, we set up a half-cube-shaped screen with the intention of giving the visuals a specific perspective. \n Finally, we placed cameras in the booth and in a wide shot, and my colleague, VJ and video technician Ooltraa, and I began our 6-hour B2B on 19 July 2025.",
     "media": [
-      { "type": "image", "src": "images/b2b_razzmatazz/b2b_razzmatazz1.png", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
-      { "type": "image", "src": "images/b2b_razzmatazz/b2b_razzmatazz2.png", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
-      { "type": "image", "src": "images/b2b_razzmatazz/b2b_razzmatazz3.png", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
-      { "type": "image", "src": "images/b2b_razzmatazz/b2b_razzmatazz4.png", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
-      { "type": "image", "src": "images/b2b_razzmatazz/b2b_razzmatazz5.png", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" }
+      { "type": "image", "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz1.png", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
+      { "type": "image", "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz2.png", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
+      { "type": "image", "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz3.png", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
+      { "type": "image", "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz4.png", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
+      { "type": "image", "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz5.png", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" }
     ],
     "tags": ["placeholder"]
   },
@@ -79,7 +79,11 @@
     "year": 2025,
     "description": "Algorithmic Nature leads into a journey where technology meets the natural world, pushing the boundaries of how we perceive and interact with our environment. \n This project transforms the internal reactions of plants into a dynamic audiovisual experience, highlighting the creative potential of living systems as they generate infinite combinations of data. \n By reinterpreting these natural processes through sound and visuals, the piece fosters a deeper understanding of plants as active, responsive entities, inviting audiences to appreciate their interconnectedness with all life. \n Algorithmic Nature challenges us to envision a future where technology does not just document nature, but collaborates with it, enabling a richer, more immersive engagement with the ecosystem around us.",
     "media": [
-      {}
+      { "type": "image", "src": "media/algolab/algorithmic_nature/algorithmic_nature01.webp", "alt": "Algorithmic Nature" },
+      { "type": "image", "src": "media/algolab/algorithmic_nature/algorithmic_nature02.webp", "alt": "Algorithmic Nature" },
+      { "type": "image", "src": "media/algolab/algorithmic_nature/algorithmic_nature03.webp", "alt": "Algorithmic Nature" },
+      { "type": "image", "src": "media/algolab/algorithmic_nature/algorithmic_nature04.webp", "alt": "Algorithmic Nature" },
+      { "type": "image", "src": "media/algolab/algorithmic_nature/algorithmic_nature05.gif", "alt": "Algorithmic Nature" }
     ],
     "tags": [""]
   },
@@ -112,7 +116,8 @@
     "year": 2025,
     "description": "",
     "media": [
-      {}
+      { "type": "image", "src": "media/algolab/lostnfound/lostnfound01.webp", "alt": "Lost & Found" },
+      { "type": "image", "src": "media/algolab/lostnfound/lostnfound02.webp", "alt": "Lost & Found" }
     ],
     "tags": [""]
   },
@@ -123,7 +128,7 @@
     "year": 2025,
     "description": "",
     "media": [
-      {}
+      { "type": "image", "src": "media/algolab/universal_remedy/universal_remedy01.webp", "alt": "Universal Remedy" }
     ],
     "tags": [""]
   },
@@ -134,7 +139,9 @@
     "year": 2025,
     "description": "This project is defined as a game of illusions between light and sound. \n By combining DMX technology with audio analysis, The Light Hole emerges as an interactive experience where the user can perceive their own voice in a unique way, regardless of the environment where the installation is located.",
     "media": [
-      {}
+      { "type": "image", "src": "media/installations/light_hole/light_hole01.webp", "alt": "Light Hole" },
+      { "type": "image", "src": "media/installations/light_hole/light_hole02.webp", "alt": "Light Hole" },
+      { "type": "image", "src": "media/installations/light_hole/light_hole03.webp", "alt": "Light Hole" }
     ],
     "tags": [""]
   },
@@ -145,7 +152,8 @@
     "year": 2025,
     "description": "This audiovisual project explores electricity as a living, omniscient entity. \n Through a suspenseful visual narrative, the project redefines our relationship with this invisible energy, presenting it as an omnipresent eye that watches over every aspect of human life. \n With a conceptual approach and tense aesthetic, ‘No signal’ challenges us to see beyond the everyday, confronting us with the unsettling possibility that the electric force, as familiar as it is feared, is a contemporary god that never ceases to watch.",
     "media": [
-      {}
+      { "type": "image", "src": "media/installations/no_signal/no_signal01.webp", "alt": "No Signal" },
+      { "type": "image", "src": "media/installations/no_signal/no_signal02.webp", "alt": "No Signal" }
     ],
     "tags": [""]
   },
@@ -156,7 +164,8 @@
     "year": 2025,
     "description": "Society can be tough and damaging to certain people that do not adjust to the standards thatthe culture and society expects from them. \n In this project, a voice wanted to be given to these people that had not fit in due to their sexual orientation and, as a result, had an identity crisis from having been discriminated against. \n The aim was not just to give them a voice, but to also create a manifesto explaining the existence of sexual diversity and creating an interactive implementation.",
     "media": [
-      {}
+      { "type": "image", "src": "media/installations/societys_sexuality/societys_sexuality01.webp", "alt": "Society's Sexuality" },
+      { "type": "image", "src": "media/installations/societys_sexuality/societys_sexuality02.webp", "alt": "Society's Sexuality" }
     ],
     "tags": [""]
   },
@@ -167,7 +176,9 @@
     "year": 2025,
     "description": "The Nest is a new corporate identity party organiser based in Castellbisbal. \n As a customised structure, I made a project proposal that included a detailed proposal, customised plans together with materials of the base structure, technical rider of the LED systems and a preview of how the piece would be finally visualised.",
     "media": [
-      {}
+      { "type": "image", "src": "media/installations/the nest/the_nest01.webp", "alt": "The Nest" },
+      { "type": "image", "src": "media/installations/the nest/the_nest02.webp", "alt": "The Nest" },
+      { "type": "image", "src": "media/installations/the nest/the_nest03.webp", "alt": "The Nest" }
     ],
     "tags": [""]
   }

@@ -1,11 +1,6 @@
 // Draw a global crosshair cursor and optional corner brackets around hovered targets
 
-// Tunable style parameters
-const CURSOR_LINE_WIDTH = 2.0;
-const CROSSHAIR_SIZE = 10; // px (base, scaled by DPR)
-const BRACKET_LENGTH = 16; // px (base, scaled by DPR)
-const BRACKET_OFFSET = 4; // px distance from box edges
-const TRANSITION_MS = 120; // crosshair <-> brackets duration
+import { CURSOR } from "./graph/config.js";
 
 let ctx = null;
 let raf = null;
@@ -76,27 +71,37 @@ function draw() {
   const dpr = Math.max(1, window.devicePixelRatio || 1);
   ctx.save();
   ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim() || "#00ff66";
-  ctx.lineWidth = CURSOR_LINE_WIDTH * dpr;
+  ctx.lineWidth = CURSOR.LINE_WIDTH * dpr;
 
   const now = performance.now();
-  const progress = Math.min(1, (now - state.lastHover) / TRANSITION_MS);
+  const progress = Math.min(1, (now - state.lastHover) / CURSOR.TRANSITION_MS);
   const tIn = state.isHovering ? progress : 0; // 0->1 when entering hover
   if (!hoverBox) {
-    // Crosshair (only when not hovering an interactive element)
-    const size = CROSSHAIR_SIZE * dpr;
+    // 3-point cursor: one line up, two diagonal lines down (Y shape) with gap at center
+    const size = CURSOR.SIZE * dpr;
+    const gap = CURSOR.GAP * dpr;
+    // Calculate angle for diagonal lines (half of bottom angle, from vertical down)
+    const halfAngle = (CURSOR.BOTTOM_ANGLE / 2) * (Math.PI / 180);
+    const sinA = Math.sin(halfAngle);
+    const cosA = Math.cos(halfAngle);
     ctx.beginPath();
-    ctx.moveTo(mouse.x - size, mouse.y);
-    ctx.lineTo(mouse.x + size, mouse.y);
-    ctx.moveTo(mouse.x, mouse.y - size);
-    ctx.lineTo(mouse.x, mouse.y + size);
+    // Vertical line going up (starts from gap, same length)
+    ctx.moveTo(mouse.x, mouse.y - gap);
+    ctx.lineTo(mouse.x, mouse.y - gap - size);
+    // Diagonal line going down-left (starts from gap, same length)
+    ctx.moveTo(mouse.x - sinA * gap, mouse.y + cosA * gap);
+    ctx.lineTo(mouse.x - sinA * (gap + size), mouse.y + cosA * (gap + size));
+    // Diagonal line going down-right (starts from gap, same length)
+    ctx.moveTo(mouse.x + sinA * gap, mouse.y + cosA * gap);
+    ctx.lineTo(mouse.x + sinA * (gap + size), mouse.y + cosA * (gap + size));
     ctx.stroke();
   } else {
     // Corner brackets around hovered element (cursor transforms into brackets)
-    const x = hoverBox.x * dpr - BRACKET_OFFSET * dpr;
-    const y = hoverBox.y * dpr - BRACKET_OFFSET * dpr;
-    const w = hoverBox.w * dpr + BRACKET_OFFSET * 2 * dpr;
-    const h = hoverBox.h * dpr + BRACKET_OFFSET * 2 * dpr;
-    const l = Math.min(BRACKET_LENGTH * dpr, Math.min(w, h) / 3); // bracket length
+    const x = hoverBox.x * dpr - CURSOR.BRACKET_OFFSET * dpr;
+    const y = hoverBox.y * dpr - CURSOR.BRACKET_OFFSET * dpr;
+    const w = hoverBox.w * dpr + CURSOR.BRACKET_OFFSET * 2 * dpr;
+    const h = hoverBox.h * dpr + CURSOR.BRACKET_OFFSET * 2 * dpr;
+    const l = Math.min(CURSOR.BRACKET_LENGTH * dpr, Math.min(w, h) / 3); // bracket length
     // animate in from center using tIn
     const cx = x + w / 2, cy = y + h / 2;
     const k = tIn; // 0..1
