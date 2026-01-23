@@ -1,5 +1,5 @@
 // Navigation, interaction and data loading
-import { state, freezeNode, hitTestAtScreen, getScreenXForIndex, getBounds, clampToBounds, getDescriptionBoxCenter, measureTextWidth, canResume } from './engine.js';
+import { state, freezeNode, hitTestAtScreen, getScreenXForIndex, getBounds, clampToBounds, getDescriptionBoxCenter, measureTextWidth, canResume, cleanupGifElements } from './engine.js';
 import * as CFG from './config.js';
 
 // ============= DATA LOADING WITH CACHE =============
@@ -191,6 +191,7 @@ export function createAboutDescriptionNode(text, mainIndex) {
 // ============= NAVIGATION FUNCTIONS =============
 
 export function resetToHome() {
+  cleanupGifElements();
   state.nodes = state.nodes.slice(0, 3);
   state.mode = "home";
   state.focusKey = null;
@@ -221,6 +222,7 @@ export async function enterFocus(which) {
   state.uiDepthTarget = 1;
   
   for (let i = 0; i < 3; i++) freezeNode(state.nodes[i]);
+  cleanupGifElements();
   state.nodes = state.nodes.slice(0, 3);
   
   if (which === "PROJECTS") {
@@ -308,6 +310,7 @@ export async function enterProjectMode(projectIndex, categorySlug, projectSlug) 
   state.uiDepthTarget = 3;
   
   state.nodes.forEach(freezeNode);
+  cleanupGifElements();
   state.nodes = state.nodes.filter(n => n.kind !== "media" && n.kind !== "description");
   
   try {
@@ -342,6 +345,7 @@ export async function enterAboutMode(mainIndex) {
   state.uiDepthTarget = 1;
   state.cameraTargetOffsetX = CFG.CAMERA.SHIFT_PER_DEPTH * state.ctx.canvas.width * state.uiDepthTarget;
   
+  cleanupGifElements();
   state.nodes = state.nodes.slice(0, 3);
   for (let i = 0; i < 3; i++) freezeNode(state.nodes[i]);
   
@@ -391,6 +395,7 @@ function handlePointerDown(e, canvas) {
 
 function handleEmptySpaceClick() {
   if (state.mode === "project") {
+    cleanupGifElements();
     state.nodes = state.nodes.filter(n => n.kind !== "description" && n.kind !== "media");
     state.mode = "category";
     state.selectedProjectIndex = -1;
@@ -429,6 +434,7 @@ function handleChildClick(node, idx) {
   }
   
   if (state.mode === "project") {
+    cleanupGifElements();
     state.nodes = state.nodes.filter(n => n.kind !== "description" && n.kind !== "media");
     state.mode = "category";
     state.selectedProjectIndex = -1;
@@ -448,6 +454,7 @@ function handleChildClick(node, idx) {
 
 function handleGrandchildClick(node, idx) {
   if (state.mode === "project" && state.selectedProjectIndex === idx) {
+    cleanupGifElements();
     state.nodes = state.nodes.filter(n => n.kind !== "description" && n.kind !== "media");
     state.mode = "category";
     state.selectedProjectIndex = -1;

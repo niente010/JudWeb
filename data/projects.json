@@ -128,7 +128,9 @@
     "year": 2025,
     "description": "",
     "media": [
-      { "type": "image", "src": "media/algolab/universal_remedy/universal_remedy01.webp", "alt": "Universal Remedy" }
+      { "type": "image", "src": "media/algolab/universal_remedy/universal_remedy01.webp", "alt": "Universal Remedy" },
+      { "type": "image", "src": "media/algolab/universal_remedy/universal_remedy02.gif", "alt": "Universal Remedy" },
+      { "type": "image", "src": "media/algolab/universal_remedy/universal_remedy03.gif", "alt": "Universal Remedy" }
     ],
     "tags": [""]
   },

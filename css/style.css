@@ -75,6 +75,22 @@ a, button, canvas { cursor: none !important; }
   pointer-events: none; /* click-through */
 }
 
+.gif-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1; /* above graph-canvas, below cursor */
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.gif-overlay img {
+  position: absolute;
+  pointer-events: none;
+  border: 1px solid var(--fg);
+}
+
 .site-footer {
   position: fixed;
   left: 0; right: 0; bottom: 0;

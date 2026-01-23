@@ -187,8 +187,12 @@ export function draw() {
   state.ctx.fillStyle = CFG.COLOR;
   state.ctx.lineWidth = CFG.LINE_WIDTH;
   
-  drawConnections();
-  drawNodes();
+  if (state.mode === "project") {
+    drawProjectModeLayered();
+  } else {
+    drawConnections();
+    drawNodes();
+  }
   
   state.ctx.restore();
 }
@@ -198,8 +202,8 @@ function drawConnections() {
     home: drawHomeConnections,
     focus: drawFocusConnections,
     category: drawCategoryConnections,
-    project: drawProjectConnections,
     content: drawContentConnections
+    // project mode uses drawProjectModeLayered() instead
   };
   drawers[state.mode]?.();
 }
@@ -277,73 +281,6 @@ function drawCategoryConnections() {
   }
 }
 
-function drawProjectConnections() {
-  // Links between mains are very dim
-  for (let i = 0; i < 3; i++) {
-    for (let j = i + 1; j < 3; j++) {
-      state.ctx.globalAlpha = 0.1;
-      state.ctx.beginPath();
-      state.ctx.moveTo(getScreenXForIndex(i), state.nodes[i].y);
-      state.ctx.lineTo(getScreenXForIndex(j), state.nodes[j].y);
-      state.ctx.stroke();
-    }
-  }
-  const pIdx = state.mainNodeIndexes.PROJECTS;
-  // Link from PROJECTS to selected category
-  if (state.selectedCategoryIndex >= 0) {
-    state.ctx.globalAlpha = 1;
-    state.ctx.beginPath();
-    state.ctx.moveTo(getScreenXForIndex(pIdx), state.nodes[pIdx].y);
-    state.ctx.lineTo(getScreenXForIndex(state.selectedCategoryIndex), state.nodes[state.selectedCategoryIndex].y);
-    state.ctx.stroke();
-  }
-  // Links from PROJECTS to non-selected categories
-  for (let k = 3; k < state.nodes.length; k++) {
-    const c = state.nodes[k];
-    if (c.kind !== "child" || k === state.selectedCategoryIndex) continue;
-    state.ctx.globalAlpha = 0.1;
-    state.ctx.beginPath();
-    state.ctx.moveTo(getScreenXForIndex(pIdx), state.nodes[pIdx].y);
-    state.ctx.lineTo(getScreenXForIndex(k), state.nodes[k].y);
-    state.ctx.stroke();
-  }
-  // Link from selected category to selected project
-  if (state.selectedProjectIndex >= 0 && state.selectedCategoryIndex >= 0) {
-    state.ctx.globalAlpha = 1;
-    state.ctx.beginPath();
-    state.ctx.moveTo(getScreenXForIndex(state.selectedCategoryIndex), state.nodes[state.selectedCategoryIndex].y);
-    state.ctx.lineTo(getScreenXForIndex(state.selectedProjectIndex), state.nodes[state.selectedProjectIndex].y);
-    state.ctx.stroke();
-  }
-  // Links from selected category to non-selected projects
-  for (let k = 3; k < state.nodes.length; k++) {
-    const g = state.nodes[k];
-    if (g.kind !== "grandchild" || g.parentIndex !== state.selectedCategoryIndex || k === state.selectedProjectIndex) continue;
-    state.ctx.globalAlpha = 0.1;
-    state.ctx.beginPath();
-    state.ctx.moveTo(getScreenXForIndex(state.selectedCategoryIndex), state.nodes[state.selectedCategoryIndex].y);
-    state.ctx.lineTo(getScreenXForIndex(k), state.nodes[k].y);
-    state.ctx.stroke();
-  }
-  // Links from selected project to its content nodes
-  if (state.selectedProjectIndex >= 0) {
-    state.ctx.globalAlpha = 1;
-    for (let k = 3; k < state.nodes.length; k++) {
-      const m = state.nodes[k];
-      if ((m.kind !== "media" && m.kind !== "description") || m.projectIndex !== state.selectedProjectIndex) continue;
-      if (m.kind === "description" && !state.nodes[k]._boxWidth) continue;
-      
-      state.ctx.beginPath();
-      state.ctx.moveTo(getScreenXForIndex(state.selectedProjectIndex), state.nodes[state.selectedProjectIndex].y);
-      const center = m.kind === "description" 
-        ? getDescriptionBoxCenter(state.nodes[k])
-        : { x: state.nodes[k].x, y: state.nodes[k].y };
-      state.ctx.lineTo(center.x, center.y);
-      state.ctx.stroke();
-    }
-  }
-}
-
 function drawContentConnections() {
   // Dim non-selected mains
   for (let i = 0; i < 3; i++) {
@@ -390,6 +327,115 @@ function drawNodes() {
   
   for (const i of sortedIndices) {
     drawNode(state.nodes[i], i, dpr);
+  }
+}
+
+function drawProjectModeLayered() {
+  // Draw layer by layer: connections first, then nodes for each layer
+  // This ensures destination-out works correctly while keeping selected connections on top
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const pIdx = state.mainNodeIndexes.PROJECTS;
+  
+  // === LAYER 1: Main nodes ===
+  // Lines between mains (dim)
+  for (let i = 0; i < 3; i++) {
+    for (let j = i + 1; j < 3; j++) {
+      state.ctx.globalAlpha = 0.1;
+      state.ctx.beginPath();
+      state.ctx.moveTo(getScreenXForIndex(i), state.nodes[i].y);
+      state.ctx.lineTo(getScreenXForIndex(j), state.nodes[j].y);
+      state.ctx.stroke();
+    }
+  }
+  // Draw main nodes
+  state.ctx.textBaseline = "middle";
+  for (let i = 0; i < 3; i++) {
+    const n = state.nodes[i];
+    const nodeAlpha = getNodeAlpha(n, i, true);
+    let fontSize = getFontSizeForNode(n, i, true);
+    fontSize = applyTransitionShrink(fontSize, n, i, true);
+    state.ctx.font = `${fontSize * dpr}px StraightNarrow, sans-serif`;
+    drawRegularNode(n, i, true, nodeAlpha, fontSize, dpr);
+  }
+  
+  // === LAYER 2: Child nodes (categories) ===
+  // Lines from PROJECTS to categories
+  for (let k = 3; k < state.nodes.length; k++) {
+    const c = state.nodes[k];
+    if (c.kind !== "child") continue;
+    state.ctx.globalAlpha = k === state.selectedCategoryIndex ? 1 : 0.1;
+    state.ctx.beginPath();
+    state.ctx.moveTo(getScreenXForIndex(pIdx), state.nodes[pIdx].y);
+    state.ctx.lineTo(getScreenXForIndex(k), state.nodes[k].y);
+    state.ctx.stroke();
+  }
+  // Draw child nodes
+  for (let k = 3; k < state.nodes.length; k++) {
+    const n = state.nodes[k];
+    if (n.kind !== "child") continue;
+    const nodeAlpha = getNodeAlpha(n, k, false);
+    let fontSize = getFontSizeForNode(n, k, false);
+    fontSize = applyTransitionShrink(fontSize, n, k, false);
+    state.ctx.font = `${fontSize * dpr}px StraightNarrow, sans-serif`;
+    drawRegularNode(n, k, false, nodeAlpha, fontSize, dpr);
+  }
+  
+  // === LAYER 3: Grandchild nodes (projects) ===
+  // Lines from selected category to projects
+  if (state.selectedCategoryIndex >= 0) {
+    for (let k = 3; k < state.nodes.length; k++) {
+      const g = state.nodes[k];
+      if (g.kind !== "grandchild" || g.parentIndex !== state.selectedCategoryIndex) continue;
+      state.ctx.globalAlpha = k === state.selectedProjectIndex ? 1 : 0.1;
+      state.ctx.beginPath();
+      state.ctx.moveTo(getScreenXForIndex(state.selectedCategoryIndex), state.nodes[state.selectedCategoryIndex].y);
+      state.ctx.lineTo(getScreenXForIndex(k), state.nodes[k].y);
+      state.ctx.stroke();
+    }
+  }
+  // Draw grandchild nodes
+  for (let k = 3; k < state.nodes.length; k++) {
+    const n = state.nodes[k];
+    if (n.kind !== "grandchild") continue;
+    const nodeAlpha = getNodeAlpha(n, k, false);
+    let fontSize = getFontSizeForNode(n, k, false);
+    fontSize = applyTransitionShrink(fontSize, n, k, false);
+    state.ctx.font = `${fontSize * dpr}px StraightNarrow, sans-serif`;
+    drawRegularNode(n, k, false, nodeAlpha, fontSize, dpr);
+  }
+  
+  // === LAYER 4: Media and description nodes ===
+  // Lines from selected project to content
+  if (state.selectedProjectIndex >= 0) {
+    state.ctx.globalAlpha = 1;
+    for (let k = 3; k < state.nodes.length; k++) {
+      const m = state.nodes[k];
+      if ((m.kind !== "media" && m.kind !== "description") || m.projectIndex !== state.selectedProjectIndex) continue;
+      if (m.kind === "description" && !state.nodes[k]._boxWidth) continue;
+      
+      state.ctx.beginPath();
+      state.ctx.moveTo(getScreenXForIndex(state.selectedProjectIndex), state.nodes[state.selectedProjectIndex].y);
+      const center = m.kind === "description" 
+        ? getDescriptionBoxCenter(state.nodes[k])
+        : { x: state.nodes[k].x, y: state.nodes[k].y };
+      state.ctx.lineTo(center.x, center.y);
+      state.ctx.stroke();
+    }
+  }
+  // Draw description nodes
+  for (let k = 3; k < state.nodes.length; k++) {
+    const n = state.nodes[k];
+    if (n.kind !== "description") continue;
+    const nodeAlpha = getNodeAlpha(n, k, false);
+    drawDescriptionNode(n, k, nodeAlpha, dpr);
+  }
+  // Draw media nodes (always on top)
+  const sortedIndices = sortNodesByZIndex();
+  for (const k of sortedIndices) {
+    const n = state.nodes[k];
+    if (n.kind !== "media") continue;
+    const nodeAlpha = getNodeAlpha(n, k, false);
+    drawMediaNode(n, k, nodeAlpha, dpr);
   }
 }
 
@@ -568,31 +614,35 @@ function drawTextContentNode(n, i, nodeAlpha, dpr) {
 }
 
 function drawMediaNode(n, i, nodeAlpha, dpr) {
-  state.ctx.save();
-  state.ctx.globalAlpha = nodeAlpha;
-  
   if (n.mediaType === 'image' && n.mediaSrc) {
-    if (!n._imageCache) {
-      n._imageCache = new Image();
-      n._imageCache.onload = () => {
-        const imgWidth = n._imageCache.naturalWidth;
-        const imgHeight = n._imageCache.naturalHeight;
-        const aspectRatio = imgWidth / imgHeight;
-        
-        if (aspectRatio > 1) {
+    // Create HTML img element for ALL images (allows proper z-index ordering)
+    if (!n._imgElement) {
+      const overlay = document.getElementById('gif-overlay');
+      if (overlay) {
+        n._imgElement = document.createElement('img');
+        n._imgElement.src = n.mediaSrc;
+        n._imgElement.alt = n.label || 'Media';
+        n._imgElement.draggable = false;
+        n._imgElement.onload = () => {
+          const imgWidth = n._imgElement.naturalWidth;
+          const imgHeight = n._imgElement.naturalHeight;
+          const aspectRatio = imgWidth / imgHeight;
+          
+          if (aspectRatio > 1) {
+            n._imageWidth = CFG.MEDIA.SIZE;
+            n._imageHeight = CFG.MEDIA.SIZE / aspectRatio;
+          } else {
+            n._imageHeight = CFG.MEDIA.SIZE;
+            n._imageWidth = CFG.MEDIA.SIZE * aspectRatio;
+          }
+        };
+        n._imgElement.onerror = () => {
+          n._imageFailed = true;
           n._imageWidth = CFG.MEDIA.SIZE;
-          n._imageHeight = CFG.MEDIA.SIZE / aspectRatio;
-        } else {
           n._imageHeight = CFG.MEDIA.SIZE;
-          n._imageWidth = CFG.MEDIA.SIZE * aspectRatio;
-        }
-      };
-      n._imageCache.onerror = () => {
-        n._imageFailed = true;
-        n._imageWidth = CFG.MEDIA.SIZE;
-        n._imageHeight = CFG.MEDIA.SIZE;
-      };
-      n._imageCache.src = n.mediaSrc;
+        };
+        overlay.appendChild(n._imgElement);
+      }
     }
     
     const baseWidth = n._imageWidth || CFG.MEDIA.SIZE;
@@ -604,38 +654,37 @@ function drawMediaNode(n, i, nodeAlpha, dpr) {
     const mx = screenX - imgWidth / 2;
     const my = n.y - imgHeight / 2;
     
-    state.ctx.save();
-    state.ctx.lineWidth = CFG.MEDIA.BORDER_WIDTH * dpr;
-    state.ctx.strokeRect(mx, my, imgWidth, imgHeight);
-    state.ctx.restore();
-    
-    if (n._imageCache.complete && !n._imageFailed) {
-      state.ctx.drawImage(n._imageCache, mx, my, imgWidth, imgHeight);
-    } else if (n._imageFailed) {
-      state.ctx.fillStyle = CFG.COLOR;
-      state.ctx.font = `${12 * dpr}px StraightNarrow, sans-serif`;
-      state.ctx.fillText('Image', mx + 5, my + imgHeight / 2);
-      state.ctx.fillText('Error', mx + 5, my + imgHeight / 2 + 15);
-    } else {
-      state.ctx.fillStyle = CFG.COLOR;
-      state.ctx.font = `${12 * dpr}px StraightNarrow, sans-serif`;
-      state.ctx.fillText('Loading...', mx + 5, my + imgHeight / 2);
+    // Update img element position and visibility
+    // Convert canvas coordinates to CSS coordinates (divide by DPR)
+    if (n._imgElement) {
+      const cssX = mx / dpr;
+      const cssY = my / dpr;
+      const cssWidth = imgWidth / dpr;
+      const cssHeight = imgHeight / dpr;
+      n._imgElement.style.left = `${cssX}px`;
+      n._imgElement.style.top = `${cssY}px`;
+      n._imgElement.style.width = `${cssWidth}px`;
+      n._imgElement.style.height = `${cssHeight}px`;
+      n._imgElement.style.opacity = nodeAlpha;
+      n._imgElement.style.display = nodeAlpha > 0.1 ? 'block' : 'none';
+      // Update z-index to match hover ordering
+      n._imgElement.style.zIndex = n._zIndex || 0;
     }
   } else {
+    // Fallback for non-image media: draw placeholder on canvas
+    state.ctx.save();
+    state.ctx.globalAlpha = nodeAlpha;
     const scale = n._individualScale || 1;
     const imgWidth = CFG.MEDIA.SIZE * scale;
     const imgHeight = CFG.MEDIA.SIZE * scale;
     const screenX = getScreenXForIndex(i);
     const mx = screenX - imgWidth / 2;
     const my = n.y - imgHeight / 2;
-    state.ctx.save();
     state.ctx.lineWidth = CFG.MEDIA.BORDER_WIDTH * dpr;
     state.ctx.strokeRect(mx, my, imgWidth, imgHeight);
-    state.ctx.restore();
     state.ctx.fillRect(mx, my, imgWidth, imgHeight);
+    state.ctx.restore();
   }
-  
-  state.ctx.restore();
 }
 
 function drawRegularNode(n, i, isMain, nodeAlpha, fontSize, dpr) {
@@ -645,11 +694,20 @@ function drawRegularNode(n, i, isMain, nodeAlpha, fontSize, dpr) {
   const screenX = getScreenXForIndex(i);
   const rx = screenX - rectW / 2;
   const ry = n.y - rectH / 2;
+  const labelX = screenX + rectW / 2 + 8;
   
   if (nodeAlpha < 1) {
+    // Calculate label width to include in the erased area
+    const labelWidth = state.ctx.measureText(n.label).width;
+    const labelHeight = fontSize * dpr;
+    
     state.ctx.save();
+    state.ctx.globalAlpha = 1;
     state.ctx.globalCompositeOperation = "destination-out";
+    // Erase rectangle area
     state.ctx.fillRect(rx - 1, ry - 1, rectW + 2, rectH + 2);
+    // Erase label area
+    state.ctx.fillRect(labelX - 2, n.y - labelHeight / 2 - 2, labelWidth + 4, labelHeight + 4);
     state.ctx.restore();
   }
   
@@ -658,7 +716,6 @@ function drawRegularNode(n, i, isMain, nodeAlpha, fontSize, dpr) {
   state.ctx.fillRect(rx, ry, rectW, rectH);
   state.ctx.restore();
   
-  const labelX = screenX + rectW / 2 + 8;
   state.ctx.save();
   state.ctx.globalAlpha = nodeAlpha;
   state.ctx.fillText(n.label, labelX, n.y);
@@ -871,6 +928,16 @@ export function freezeNode(n) {
   n.targetX = n.x;
   n.targetY = n.y;
   n.targetTimer = 1e9;
+}
+
+// Remove image overlay elements for media nodes that will be removed
+export function cleanupGifElements() {
+  for (const n of state.nodes) {
+    if (n._imgElement) {
+      n._imgElement.remove();
+      n._imgElement = null;
+    }
+  }
 }
 
 export function clampToBounds(x, y, bounds) {
