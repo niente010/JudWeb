@@ -331,13 +331,13 @@ function drawNodes() {
 }
 
 function drawProjectModeLayered() {
-  // Draw layer by layer: connections first, then nodes for each layer
-  // This ensures destination-out works correctly while keeping selected connections on top
+  // Draw layer by layer with active connections drawn AFTER dim nodes
   const dpr = Math.max(1, window.devicePixelRatio || 1);
   const pIdx = state.mainNodeIndexes.PROJECTS;
   
-  // === LAYER 1: Main nodes ===
-  // Lines between mains (dim)
+  // === PHASE 1: Draw all DIM elements (connections and nodes) ===
+  
+  // Dim lines between mains
   for (let i = 0; i < 3; i++) {
     for (let j = i + 1; j < 3; j++) {
       state.ctx.globalAlpha = 0.1;
@@ -347,9 +347,36 @@ function drawProjectModeLayered() {
       state.ctx.stroke();
     }
   }
-  // Draw main nodes
+  
+  // Dim lines from PROJECTS to non-selected categories
+  for (let k = 3; k < state.nodes.length; k++) {
+    const c = state.nodes[k];
+    if (c.kind !== "child" || k === state.selectedCategoryIndex) continue;
+    state.ctx.globalAlpha = 0.1;
+    state.ctx.beginPath();
+    state.ctx.moveTo(getScreenXForIndex(pIdx), state.nodes[pIdx].y);
+    state.ctx.lineTo(getScreenXForIndex(k), state.nodes[k].y);
+    state.ctx.stroke();
+  }
+  
+  // Dim lines from selected category to non-selected projects
+  if (state.selectedCategoryIndex >= 0) {
+    for (let k = 3; k < state.nodes.length; k++) {
+      const g = state.nodes[k];
+      if (g.kind !== "grandchild" || g.parentIndex !== state.selectedCategoryIndex) continue;
+      if (k === state.selectedProjectIndex) continue;
+      state.ctx.globalAlpha = 0.1;
+      state.ctx.beginPath();
+      state.ctx.moveTo(getScreenXForIndex(state.selectedCategoryIndex), state.nodes[state.selectedCategoryIndex].y);
+      state.ctx.lineTo(getScreenXForIndex(k), state.nodes[k].y);
+      state.ctx.stroke();
+    }
+  }
+  
+  // Draw dim main nodes (non-PROJECTS)
   state.ctx.textBaseline = "middle";
   for (let i = 0; i < 3; i++) {
+    if (i === pIdx) continue;
     const n = state.nodes[i];
     const nodeAlpha = getNodeAlpha(n, i, true);
     let fontSize = getFontSizeForNode(n, i, true);
@@ -358,53 +385,79 @@ function drawProjectModeLayered() {
     drawRegularNode(n, i, true, nodeAlpha, fontSize, dpr);
   }
   
-  // === LAYER 2: Child nodes (categories) ===
-  // Lines from PROJECTS to categories
+  // Draw dim child nodes (non-selected categories)
   for (let k = 3; k < state.nodes.length; k++) {
-    const c = state.nodes[k];
-    if (c.kind !== "child") continue;
-    state.ctx.globalAlpha = k === state.selectedCategoryIndex ? 1 : 0.1;
+    const n = state.nodes[k];
+    if (n.kind !== "child" || k === state.selectedCategoryIndex) continue;
+    const nodeAlpha = getNodeAlpha(n, k, false);
+    let fontSize = getFontSizeForNode(n, k, false);
+    fontSize = applyTransitionShrink(fontSize, n, k, false);
+    state.ctx.font = `${fontSize * dpr}px StraightNarrow, sans-serif`;
+    drawRegularNode(n, k, false, nodeAlpha, fontSize, dpr);
+  }
+  
+  // Draw dim grandchild nodes (non-selected projects)
+  for (let k = 3; k < state.nodes.length; k++) {
+    const n = state.nodes[k];
+    if (n.kind !== "grandchild" || k === state.selectedProjectIndex) continue;
+    const nodeAlpha = getNodeAlpha(n, k, false);
+    let fontSize = getFontSizeForNode(n, k, false);
+    fontSize = applyTransitionShrink(fontSize, n, k, false);
+    state.ctx.font = `${fontSize * dpr}px StraightNarrow, sans-serif`;
+    drawRegularNode(n, k, false, nodeAlpha, fontSize, dpr);
+  }
+  
+  // === PHASE 2: Draw ACTIVE path (connections and nodes) on top ===
+  
+  // Active line: PROJECTS to selected category
+  if (state.selectedCategoryIndex >= 0) {
+    state.ctx.globalAlpha = 1;
     state.ctx.beginPath();
     state.ctx.moveTo(getScreenXForIndex(pIdx), state.nodes[pIdx].y);
-    state.ctx.lineTo(getScreenXForIndex(k), state.nodes[k].y);
+    state.ctx.lineTo(getScreenXForIndex(state.selectedCategoryIndex), state.nodes[state.selectedCategoryIndex].y);
     state.ctx.stroke();
   }
-  // Draw child nodes
-  for (let k = 3; k < state.nodes.length; k++) {
-    const n = state.nodes[k];
-    if (n.kind !== "child") continue;
-    const nodeAlpha = getNodeAlpha(n, k, false);
-    let fontSize = getFontSizeForNode(n, k, false);
-    fontSize = applyTransitionShrink(fontSize, n, k, false);
-    state.ctx.font = `${fontSize * dpr}px StraightNarrow, sans-serif`;
-    drawRegularNode(n, k, false, nodeAlpha, fontSize, dpr);
+  
+  // Active line: selected category to selected project
+  if (state.selectedCategoryIndex >= 0 && state.selectedProjectIndex >= 0) {
+    state.ctx.globalAlpha = 1;
+    state.ctx.beginPath();
+    state.ctx.moveTo(getScreenXForIndex(state.selectedCategoryIndex), state.nodes[state.selectedCategoryIndex].y);
+    state.ctx.lineTo(getScreenXForIndex(state.selectedProjectIndex), state.nodes[state.selectedProjectIndex].y);
+    state.ctx.stroke();
   }
   
-  // === LAYER 3: Grandchild nodes (projects) ===
-  // Lines from selected category to projects
+  // Draw PROJECTS node (active)
+  {
+    const n = state.nodes[pIdx];
+    const nodeAlpha = getNodeAlpha(n, pIdx, true);
+    let fontSize = getFontSizeForNode(n, pIdx, true);
+    fontSize = applyTransitionShrink(fontSize, n, pIdx, true);
+    state.ctx.font = `${fontSize * dpr}px StraightNarrow, sans-serif`;
+    drawRegularNode(n, pIdx, true, nodeAlpha, fontSize, dpr);
+  }
+  
+  // Draw selected category node (active)
   if (state.selectedCategoryIndex >= 0) {
-    for (let k = 3; k < state.nodes.length; k++) {
-      const g = state.nodes[k];
-      if (g.kind !== "grandchild" || g.parentIndex !== state.selectedCategoryIndex) continue;
-      state.ctx.globalAlpha = k === state.selectedProjectIndex ? 1 : 0.1;
-      state.ctx.beginPath();
-      state.ctx.moveTo(getScreenXForIndex(state.selectedCategoryIndex), state.nodes[state.selectedCategoryIndex].y);
-      state.ctx.lineTo(getScreenXForIndex(k), state.nodes[k].y);
-      state.ctx.stroke();
-    }
-  }
-  // Draw grandchild nodes
-  for (let k = 3; k < state.nodes.length; k++) {
-    const n = state.nodes[k];
-    if (n.kind !== "grandchild") continue;
-    const nodeAlpha = getNodeAlpha(n, k, false);
-    let fontSize = getFontSizeForNode(n, k, false);
-    fontSize = applyTransitionShrink(fontSize, n, k, false);
+    const n = state.nodes[state.selectedCategoryIndex];
+    const nodeAlpha = getNodeAlpha(n, state.selectedCategoryIndex, false);
+    let fontSize = getFontSizeForNode(n, state.selectedCategoryIndex, false);
+    fontSize = applyTransitionShrink(fontSize, n, state.selectedCategoryIndex, false);
     state.ctx.font = `${fontSize * dpr}px StraightNarrow, sans-serif`;
-    drawRegularNode(n, k, false, nodeAlpha, fontSize, dpr);
+    drawRegularNode(n, state.selectedCategoryIndex, false, nodeAlpha, fontSize, dpr);
   }
   
-  // === LAYER 4: Media and description nodes ===
+  // Draw selected project node (active)
+  if (state.selectedProjectIndex >= 0) {
+    const n = state.nodes[state.selectedProjectIndex];
+    const nodeAlpha = getNodeAlpha(n, state.selectedProjectIndex, false);
+    let fontSize = getFontSizeForNode(n, state.selectedProjectIndex, false);
+    fontSize = applyTransitionShrink(fontSize, n, state.selectedProjectIndex, false);
+    state.ctx.font = `${fontSize * dpr}px StraightNarrow, sans-serif`;
+    drawRegularNode(n, state.selectedProjectIndex, false, nodeAlpha, fontSize, dpr);
+  }
+  
+  // === PHASE 3: Media and description nodes ===
   // Lines from selected project to content
   if (state.selectedProjectIndex >= 0) {
     state.ctx.globalAlpha = 1;
@@ -727,8 +780,11 @@ function sortNodesByZIndex() {
   sortedIndices.sort((a, b) => {
     const nodeA = state.nodes[a];
     const nodeB = state.nodes[b];
-    const zIndexA = nodeA.kind === "media" ? (nodeA._zIndex || 0) : -1000 - a;
-    const zIndexB = nodeB.kind === "media" ? (nodeB._zIndex || 0) : -1000 - b;
+    // aboutDescription should be drawn last (highest z-index)
+    const zIndexA = nodeA.kind === "aboutDescription" ? 10000 : 
+                    nodeA.kind === "media" ? (nodeA._zIndex || 0) : -1000 - a;
+    const zIndexB = nodeB.kind === "aboutDescription" ? 10000 : 
+                    nodeB.kind === "media" ? (nodeB._zIndex || 0) : -1000 - b;
     return zIndexA - zIndexB;
   });
   return sortedIndices;

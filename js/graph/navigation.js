@@ -153,9 +153,14 @@ export function createDescriptionNode(project, projectIndex) {
   anchorX = Math.max(margin, Math.min(canvasWidth - margin, anchorX));
   anchorY = Math.max(margin, Math.min(canvasHeight - margin, anchorY));
   
+  // Convert description array to string with paragraph breaks
+  const descriptionText = Array.isArray(project.description) 
+    ? project.description.join('\n\n') 
+    : project.description;
+  
   return {
     kind: "description",
-    description: project.description,
+    description: descriptionText,
     projectIndex,
     x: anchorX,
     y: anchorY,
@@ -360,6 +365,29 @@ export async function enterAboutMode(mainIndex) {
 
 // ============= INTERACTION CONTROLLER =============
 
+// Check if a node is part of the active path in project mode
+function isNodeInteractiveInProjectMode(idx) {
+  if (state.mode !== "project") return true;
+  
+  const n = state.nodes[idx];
+  if (!n) return false;
+  
+  // PROJECTS node is always interactive
+  if (idx === state.mainNodeIndexes.PROJECTS) return true;
+  
+  // Selected category is interactive
+  if (idx === state.selectedCategoryIndex) return true;
+  
+  // Selected project is interactive
+  if (idx === state.selectedProjectIndex) return true;
+  
+  // Media and description of selected project are interactive
+  if ((n.kind === "media" || n.kind === "description") && n.projectIndex === state.selectedProjectIndex) return true;
+  
+  // Everything else is not interactive in project mode
+  return false;
+}
+
 export function setupInteraction(canvas) {
   canvas.onpointerdown = (e) => handlePointerDown(e, canvas);
   canvas.onpointermove = (e) => handlePointerMove(e, canvas);
@@ -374,7 +402,8 @@ function handlePointerDown(e, canvas) {
   const idx = hitTestAtScreen(x, y);
   const n = idx >= 0 ? state.nodes[idx] : null;
   
-  if (!n) {
+  // Check if node is interactive in current mode
+  if (!n || !isNodeInteractiveInProjectMode(idx)) {
     handleEmptySpaceClick();
     return;
   }
@@ -537,7 +566,13 @@ function handleDrag(x, y, rect) {
 }
 
 function handleHover(x, y, rect) {
-  const hitIndex = hitTestAtScreen(x, y);
+  let hitIndex = hitTestAtScreen(x, y);
+  
+  // Filter out non-interactive nodes in project mode
+  if (hitIndex >= 0 && !isNodeInteractiveInProjectMode(hitIndex)) {
+    hitIndex = -1;
+  }
+  
   const n = hitIndex >= 0 ? state.nodes[hitIndex] : null;
   
   if (hitIndex !== state.hoveredNodeIndex) {
