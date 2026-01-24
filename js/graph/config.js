@@ -38,11 +38,11 @@ export const GRANDCHILD = {
 
 // Media nodes (project images/videos)
 export const MEDIA = {
-  SIZE: 600, // size of media thumbnail in pixels
-  MIN_DISTANCE: 200, // minimum distance from project node
-  MAX_DISTANCE: 1600, // maximum distance from project node
+  SIZE: 1000, // size of media thumbnail in pixels
+  MIN_DISTANCE: 300, // minimum distance from project node
+  MAX_DISTANCE: 1300, // maximum distance from project node
   OSCILLATION_SPEED: 0.8, // speed factor for media movement
-  SCALE_MIN: 0.6, // minimum scale for media thumbnails (0.6 = 60% size)
+  SCALE_MIN: 0.5, // minimum scale for media thumbnails (0.6 = 60% size)
   SCALE_MAX: 1.0, // maximum scale for media thumbnails (1.0 = 100% size)
   SECTOR_ANGLE_MIN: -Math.PI * 0.9, // start angle of sector
   SECTOR_ANGLE_MAX: -Math.PI * 1.3, // end angle of sector
@@ -54,7 +54,7 @@ export const MEDIA = {
 export const DESCRIPTION = {
   TEXT_MAX_WIDTH: 1800, // max width for text wrapping
   FONT_SIZE: 14, // font size for description text
-  LINE_HEIGHT: 36, // line height for description text
+  LINE_HEIGHT: 40, // line height for description text
   PADDING: 20, // space between text and corner brackets
   VIEWPORT_X_MIN: 0.93, // min horizontal position (ratio of canvas width)
   VIEWPORT_X_MAX: 1, // max horizontal position

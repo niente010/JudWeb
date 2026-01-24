@@ -363,6 +363,12 @@ export async function enterAboutMode(mainIndex) {
   }
 }
 
+// ============= MOBILE DETECTION =============
+
+function isMobileDevice() {
+  return window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+}
+
 // ============= INTERACTION CONTROLLER =============
 
 // Check if a node is part of the active path in project mode
@@ -393,6 +399,24 @@ export function setupInteraction(canvas) {
   canvas.onpointermove = (e) => handlePointerMove(e, canvas);
   canvas.onpointerup = () => handlePointerUp();
   canvas.onpointerleave = () => handlePointerLeave();
+  
+  // Disable scrolling on mobile devices
+  if (isMobileDevice()) {
+    // Prevent touch scrolling on the canvas
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+    }, { passive: false });
+    
+    // Prevent wheel/scroll events
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+    }, { passive: false });
+    
+    // Prevent document-level scrolling
+    document.body.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+    }, { passive: false });
+  }
 }
 
 function handlePointerDown(e, canvas) {
