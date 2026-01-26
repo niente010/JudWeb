@@ -182,7 +182,7 @@ export function createMediaNode(mediaItem, projectIndex, mediaIndex, totalMediaC
     targetX: baseX,
     targetY: baseY,
     _individualScale: individualScale,
-    _zIndex: 0,
+    _zIndex: Math.floor(Math.random() * 1000), // Random initial z-order
     _imageWidth: null,
     _imageHeight: null,
   };

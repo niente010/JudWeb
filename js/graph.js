@@ -24,6 +24,12 @@ export function startGraph(canvas) {
   state.selectedCategoryIndex = -1;
   state.selectedProjectIndex = -1;
   
+  // Reset camera to center
+  state.uiDepth = 0;
+  state.uiDepthTarget = 0;
+  state.cameraOffsetX = 0;
+  state.cameraTargetOffsetX = 0;
+  
   // Compute three stable anchors for mains and initialize near them
   state.mainAnchors = computeMainAnchors(width, height);
   for (let i = 0; i < 3; i++) {

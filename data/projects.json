@@ -1,5 +1,35 @@
 [
   {
+    "slug": "sauri",
+    "title": "SAURI",
+    "category": "visuals",
+    "year": 2024,
+    "description": [
+      "For the premiere of Ofrena at the Montcada Theatre (Valencia), I was responsible for the complete visual design of the performance, including the conceptual development, production, and live technical execution of the audiovisual show.",
+      "The proposal is built around a hybrid system combining pre-produced visuals with real-time live processing, using generative and reactive effects developed in TouchDesigner, enabling a dynamic and adaptive visual narrative throughout the performance."
+          ],
+    "media": [
+      { "type": "image", "src": "media/visuals/sauri/sauri01.gif", "alt": "SAURI" },
+      { "type": "image", "src": "media/visuals/sauri/sauri02.gif", "alt": "SAURI" },
+      { "type": "image", "src": "media/visuals/sauri/sauri03.gif", "alt": "SAURI" }
+    ]
+  },
+  {
+    "slug": "qq+jud",
+    "title": "Make the Room Talk - QQ + JUD",
+    "category": "visuals",
+    "year": 2024,
+    "description": [
+      "For the premiere of Ofrena at the Montcada Theatre (Valencia), I was responsible for the complete visual design of the performance, including the conceptual development, production, and live technical execution of the audiovisual show.",
+      "The proposal is built around a hybrid system combining pre-produced visuals with real-time live processing, using generative and reactive effects developed in TouchDesigner, enabling a dynamic and adaptive visual narrative throughout the performance."
+          ],
+      "media": [
+        { "type": "image", "src": "media/visuals/qq+jud/qq+jud01.gif", "alt": "QQ + JUD" },
+        { "type": "image", "src": "media/visuals/qq+jud/qq+jud02.gif", "alt": "QQ + JUD" }
+      ]
+  },
+
+  {
     "slug": "la-sra-tomasa",
     "title": "LA SRA.TOMASA LIVE",
     "category": "visuals",
@@ -116,25 +146,19 @@
     "tags": [""]
   },
   {
-    "slug": "ascii-code-sounded",
-    "title": "ASCII Code Sounded",
+    "slug": "glaciers",
+    "title": "Glaciers",
     "category": "algolab",
     "year": 2025,
-    "description": [],
-    "media": [
-      {}
+    "description": [
+      "GLACIERS is an interactive audiovisual installation that seeks to embody the disappearance of glaciers through an intimate and sensory encounter. The piece consists of a microphone frozen inside a block of ice which, as it melts in real time, captures and transforms the subtle sounds of dripping and cracking into an amplified soundscape, accessible to the audience through headphones.",
+      "Visitors are invited not only to listen, but also to touch the ice, accelerating its melting process and becoming active participants in the work—and, by extension, in the phenomenon it represents. This interaction highlights how every human action, whether individual or collective, contributes to climate collapse.",
+      "Presented within a gallery or public space, GLACIERS functions both as a reflection of the fragility of glaciers and as a reminder of how technology, consumption, and our everyday decisions directly impact the survival of these vital ecosystems."
     ],
-    "tags": [""]
-  },
-  {
-    "slug": "blobtrack-sounded",
-    "title": "blobtrack Sounded",
-    "category": "algolab",
-    "year": 2025,
-    "description": [],
     "media": [
-      {}
-    ],
+      { "type": "image", "src": "media/algolab/glaciers/glaciers01.gif", "alt": "Glaciers" },
+      { "type": "image", "src": "media/algolab/glaciers/glaciers02.webp", "alt": "Glaciers" }
+      ],
     "tags": [""]
   },
   {
