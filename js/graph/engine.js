@@ -67,6 +67,21 @@ export function step(dt) {
       applyRepulsion(n, idx);
     }
     
+    // Repulsion among media nodes to keep them spread out
+    if (n.kind === "media" && state.mode === "project") {
+      applyMediaRepulsion(n, idx);
+    }
+    
+    // Repulsion among child nodes (categories/contacts)
+    if (n.kind === "child" && (state.mode === "focus" || state.mode === "category" || state.mode === "project")) {
+      applyChildRepulsion(n, idx);
+    }
+    
+    // Repulsion among grandchild nodes (projects)
+    if (n.kind === "grandchild" && (state.mode === "category" || state.mode === "project")) {
+      applyGrandchildRepulsion(n, idx);
+    }
+    
     const speedScale = getSpeedScale(n);
     
     // Occasionally pick a new random target within bounds
@@ -89,7 +104,30 @@ export function step(dt) {
     n.x += n.vx * 40 * dt;
     n.y += n.vy * 40 * dt;
     
-    // Soft boundary steering
+    // Hard boundary clamping for media nodes (stay inside spawn area)
+    // Skip if media was manually dragged by user
+    if (n.kind === "media" && state.mode === "project" && !n._manuallyMoved) {
+      const isMobileView = window.innerWidth <= CFG.MEDIA.MOBILE_BREAKPOINT;
+      const area = isMobileView ? CFG.MEDIA.MOBILE : CFG.MEDIA.DESKTOP;
+      const scale = n._individualScale || 1;
+      const imgWidth = n._imageWidth || CFG.MEDIA.SIZE;
+      const imgHeight = n._imageHeight || CFG.MEDIA.SIZE;
+      const marginX = imgWidth * scale / 2;
+      const marginY = imgHeight * scale / 2;
+      
+      const minX = area.X_MIN * width + marginX;
+      const maxX = area.X_MAX * width - marginX;
+      const minY = area.Y_MIN * height + marginY;
+      const maxY = area.Y_MAX * height - marginY;
+      
+      // Clamp position
+      if (n.x < minX) { n.x = minX; n.vx = Math.abs(n.vx) * 0.5; }
+      if (n.x > maxX) { n.x = maxX; n.vx = -Math.abs(n.vx) * 0.5; }
+      if (n.y < minY) { n.y = minY; n.vy = Math.abs(n.vy) * 0.5; }
+      if (n.y > maxY) { n.y = maxY; n.vy = -Math.abs(n.vy) * 0.5; }
+    }
+    
+    // Soft boundary steering for other nodes
     const margin = 30;
     if (n.x < bounds.left + margin) n.vx += 0.01;
     if (n.x > bounds.right - margin) n.vx -= 0.01;
@@ -121,6 +159,63 @@ function applyRepulsion(n, idx) {
   }
 }
 
+function applyMediaRepulsion(n, idx) {
+  // Repel from other media nodes to keep them spread out
+  for (let j = 0; j < state.nodes.length; j++) {
+    if (j === idx) continue;
+    const m = state.nodes[j];
+    if (m.kind !== "media") continue;
+    
+    const dx = n.x - m.x;
+    const dy = n.y - m.y;
+    const dist = Math.hypot(dx, dy) || 0.0001;
+    
+    if (dist < CFG.MEDIA.SEPARATION) {
+      const force = (CFG.MEDIA.SEPARATION - dist) * CFG.MEDIA.REPULSION_STRENGTH;
+      n.vx += (dx / dist) * force;
+      n.vy += (dy / dist) * force;
+    }
+  }
+}
+
+function applyChildRepulsion(n, idx) {
+  // Repel from other child nodes to avoid overlap
+  for (let j = 0; j < state.nodes.length; j++) {
+    if (j === idx) continue;
+    const m = state.nodes[j];
+    if (m.kind !== "child") continue;
+    
+    const dx = n.x - m.x;
+    const dy = n.y - m.y;
+    const dist = Math.hypot(dx, dy) || 0.0001;
+    
+    if (dist < CFG.CHILD.SEPARATION) {
+      const force = (CFG.CHILD.SEPARATION - dist) * CFG.CHILD.REPULSION_STRENGTH;
+      n.vx += (dx / dist) * force;
+      n.vy += (dy / dist) * force;
+    }
+  }
+}
+
+function applyGrandchildRepulsion(n, idx) {
+  // Repel from other grandchild nodes to avoid overlap
+  for (let j = 0; j < state.nodes.length; j++) {
+    if (j === idx) continue;
+    const m = state.nodes[j];
+    if (m.kind !== "grandchild") continue;
+    
+    const dx = n.x - m.x;
+    const dy = n.y - m.y;
+    const dist = Math.hypot(dx, dy) || 0.0001;
+    
+    if (dist < CFG.GRANDCHILD.SEPARATION) {
+      const force = (CFG.GRANDCHILD.SEPARATION - dist) * CFG.GRANDCHILD.REPULSION_STRENGTH;
+      n.vx += (dx / dist) * force;
+      n.vy += (dy / dist) * force;
+    }
+  }
+}
+
 function getSpeedScale(n) {
   if (n.kind === "child") return CFG.CHILD.SPEED_SCALE;
   if (n.kind === "grandchild") return CFG.GRANDCHILD.SPEED_SCALE;
@@ -141,35 +236,110 @@ function assignNewTarget(n, idx, bounds) {
     n.targetY = c.y;
   } else if (n.kind === "child" && n.parentKey && state.mainNodeIndexes[n.parentKey] >= 0) {
     const anchor = state.nodes[state.mainNodeIndexes[n.parentKey]];
-    const ang = (Math.random() - 0.5) * 2 * CFG.CHILD.SECTOR_HALF_ANGLE;
     const r = Math.max(CFG.CHILD.MIN_DISTANCE, CFG.CHILD.WANDER_RADIUS);
-    let tx = anchor.x + Math.cos(ang) * r + CFG.CHILD.X_OFFSET;
-    let ty = anchor.y + Math.sin(ang) * r;
-    const c = clampToBounds(tx, ty, bounds);
-    n.targetX = c.x;
-    n.targetY = c.y;
+    
+    // Try to find a target that's not too close to other child nodes
+    let bestTarget = null;
+    let bestMinDist = 0;
+    const maxAttempts = 10;
+    
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const ang = (Math.random() - 0.5) * 2 * CFG.CHILD.SECTOR_HALF_ANGLE;
+      let tx = anchor.x + Math.cos(ang) * r + CFG.CHILD.X_OFFSET;
+      let ty = anchor.y + Math.sin(ang) * r;
+      const c = clampToBounds(tx, ty, bounds);
+      
+      // Find minimum distance to other child nodes
+      let minDistToOthers = Infinity;
+      for (const other of state.nodes) {
+        if (other === n || other.kind !== "child") continue;
+        const dist = Math.hypot(c.x - other.x, c.y - other.y);
+        minDistToOthers = Math.min(minDistToOthers, dist);
+      }
+      
+      // Keep the target with the best (largest) minimum distance
+      if (minDistToOthers > bestMinDist) {
+        bestMinDist = minDistToOthers;
+        bestTarget = c;
+      }
+      
+      // If we found a good enough target, stop early
+      if (minDistToOthers >= CFG.CHILD.SEPARATION) break;
+    }
+    
+    if (bestTarget) {
+      n.targetX = bestTarget.x;
+      n.targetY = bestTarget.y;
+    }
   } else if (n.kind === "grandchild" && state.selectedCategoryIndex >= 0) {
     const anchor = state.nodes[state.selectedCategoryIndex];
-    const ang = (Math.random() - 0.5) * 2 * CFG.GRANDCHILD.SECTOR_HALF_ANGLE;
     const r = CFG.GRANDCHILD.WANDER_RADIUS;
-    let tx = anchor.x + Math.cos(ang) * r + CFG.GRANDCHILD.X_OFFSET;
-    let ty = anchor.y + Math.sin(ang) * r;
-    const c = clampToBounds(tx, ty, bounds);
-    n.targetX = c.x;
-    n.targetY = c.y;
+    
+    // Try to find a target that's not too close to other grandchild nodes
+    let bestTarget = null;
+    let bestMinDist = 0;
+    const maxAttempts = 10;
+    
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const ang = (Math.random() - 0.5) * 2 * CFG.GRANDCHILD.SECTOR_HALF_ANGLE;
+      let tx = anchor.x + Math.cos(ang) * r + CFG.GRANDCHILD.X_OFFSET;
+      let ty = anchor.y + Math.sin(ang) * r;
+      const c = clampToBounds(tx, ty, bounds);
+      
+      // Find minimum distance to other grandchild nodes
+      let minDistToOthers = Infinity;
+      for (const other of state.nodes) {
+        if (other === n || other.kind !== "grandchild") continue;
+        const dist = Math.hypot(c.x - other.x, c.y - other.y);
+        minDistToOthers = Math.min(minDistToOthers, dist);
+      }
+      
+      // Keep the target with the best (largest) minimum distance
+      if (minDistToOthers > bestMinDist) {
+        bestMinDist = minDistToOthers;
+        bestTarget = c;
+      }
+      
+      // If we found a good enough target, stop early
+      if (minDistToOthers >= CFG.GRANDCHILD.SEPARATION) break;
+    }
+    
+    if (bestTarget) {
+      n.targetX = bestTarget.x;
+      n.targetY = bestTarget.y;
+    }
   } else if (n.kind === "description" && state.mode === "project" && state.selectedProjectIndex >= 0) {
     // Description nodes stay fixed
   } else if (n.kind === "media" && state.mode === "project" && state.selectedProjectIndex >= 0) {
-    const project = state.nodes[state.selectedProjectIndex];
-    if (project && n._individualDistance) {
-      const ang = CFG.MEDIA.SECTOR_ANGLE_MIN + Math.random() * (CFG.MEDIA.SECTOR_ANGLE_MAX - CFG.MEDIA.SECTOR_ANGLE_MIN);
-      const distanceVariation = n._individualDistance * 0.1;
-      const distance = n._individualDistance + (Math.random() - 0.5) * 2 * distanceVariation;
-      let tx = project.x + Math.cos(ang) * distance;
-      let ty = project.y + Math.sin(ang) * distance;
-      const c = clampToBounds(tx, ty, bounds);
-      n.targetX = c.x;
-      n.targetY = c.y;
+    const canvasWidth = state.ctx.canvas.width;
+    const canvasHeight = state.ctx.canvas.height;
+    const scale = n._individualScale || 1;
+    const imgWidth = n._imageWidth || CFG.MEDIA.SIZE;
+    const margin = imgWidth * scale / 2;
+    
+    // If manually moved, oscillate around current position
+    if (n._manuallyMoved) {
+      const wanderRadius = 50; // small oscillation around dropped position
+      const ang = Math.random() * Math.PI * 2;
+      const r = Math.random() * wanderRadius;
+      n.targetX = n.x + Math.cos(ang) * r;
+      n.targetY = n.y + Math.sin(ang) * r;
+      
+      // Keep within canvas bounds (but not the restricted area)
+      n.targetX = clamp(n.targetX, margin, canvasWidth - margin);
+      n.targetY = clamp(n.targetY, margin, canvasHeight - margin);
+    } else {
+      // Normal behavior: oscillate within defined spawn area
+      const isMobileView = window.innerWidth <= CFG.MEDIA.MOBILE_BREAKPOINT;
+      const area = isMobileView ? CFG.MEDIA.MOBILE : CFG.MEDIA.DESKTOP;
+      
+      const minX = area.X_MIN * canvasWidth + margin;
+      const maxX = area.X_MAX * canvasWidth - margin;
+      const minY = area.Y_MIN * canvasHeight + margin;
+      const maxY = area.Y_MAX * canvasHeight - margin;
+      
+      n.targetX = minX + Math.random() * Math.max(0, maxX - minX);
+      n.targetY = minY + Math.random() * Math.max(0, maxY - minY);
     }
   } else {
     n.targetX = lerp(bounds.left, bounds.right, Math.random());
@@ -189,6 +359,8 @@ export function draw() {
   
   if (state.mode === "project") {
     drawProjectModeLayered();
+  } else if (state.mode === "category") {
+    drawCategoryModeLayered();
   } else {
     drawConnections();
     drawNodes();
@@ -278,6 +450,60 @@ function drawCategoryConnections() {
       state.ctx.lineTo(getScreenXForIndex(k), state.nodes[k].y);
       state.ctx.stroke();
     }
+  }
+}
+
+function drawCategoryModeLayered() {
+  // Layered drawing: grandchild lines drawn AFTER child nodes
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const pIdx = state.mainNodeIndexes.PROJECTS;
+  const catIdx = state.selectedCategoryIndex;
+  state.ctx.textBaseline = "middle";
+  
+  // Helper: draw line between two node indices
+  const line = (i, j, alpha = 1) => {
+    state.ctx.globalAlpha = alpha;
+    state.ctx.beginPath();
+    state.ctx.moveTo(getScreenXForIndex(i), state.nodes[i].y);
+    state.ctx.lineTo(getScreenXForIndex(j), state.nodes[j].y);
+    state.ctx.stroke();
+  };
+  
+  // Helper: draw node with proper font
+  const node = (i, alpha) => {
+    const n = state.nodes[i], isMain = i < 3;
+    let fontSize = applyTransitionShrink(getFontSizeForNode(n, i, isMain), n, i, isMain);
+    state.ctx.font = `${fontSize * dpr}px StraightNarrow, sans-serif`;
+    drawRegularNode(n, i, isMain, alpha, fontSize, dpr);
+  };
+  
+  // Dim connections between mains
+  for (let i = 0; i < 3; i++) for (let j = i + 1; j < 3; j++) line(i, j, CFG.MAIN.DIM_ALPHA);
+  
+  // Connections & nodes: PROJECTS → categories
+  for (let k = 3; k < state.nodes.length; k++) {
+    if (state.nodes[k].kind !== "child") continue;
+    line(pIdx, k, k === catIdx ? 1 : CFG.MAIN.DIM_ALPHA);
+  }
+  
+  // Main nodes + child nodes
+  for (let i = 0; i < 3; i++) node(i, i === pIdx ? 1 : CFG.MAIN.DIM_ALPHA);
+  for (let k = 3; k < state.nodes.length; k++) {
+    if (state.nodes[k].kind === "child") node(k, k === catIdx ? 1 : CFG.MAIN.DIM_ALPHA);
+  }
+  
+  // Grandchild connections (ON TOP of child nodes)
+  if (catIdx >= 0) {
+    for (let k = 3; k < state.nodes.length; k++) {
+      const c = state.nodes[k];
+      if (c.kind === "grandchild" && c.parentIndex === catIdx) line(catIdx, k, 1);
+    }
+  }
+  
+  // Grandchild nodes
+  for (let k = 3; k < state.nodes.length; k++) {
+    const n = state.nodes[k];
+    if (n.kind === "grandchild") node(k, n.parentIndex === catIdx ? 1 : CFG.MAIN.DIM_ALPHA);
   }
 }
 
@@ -581,7 +807,9 @@ function drawDescriptionNode(n, i, nodeAlpha, dpr) {
   state.ctx.font = `${CFG.DESCRIPTION.FONT_SIZE * dpr}px StraightNarrow, sans-serif`;
   
   if (n.description) {
-    const wrappedLines = wrapText(state.ctx, n.description, CFG.DESCRIPTION.TEXT_MAX_WIDTH);
+    // Calculate responsive max width based on canvas size
+    const maxWidth = state.ctx.canvas.width * CFG.DESCRIPTION.TEXT_MAX_WIDTH_RATIO;
+    const wrappedLines = wrapText(state.ctx, n.description, maxWidth);
     const boxSize = calculateTextBoxSize(state.ctx, wrappedLines, CFG.DESCRIPTION.LINE_HEIGHT, CFG.DESCRIPTION.PADDING);
     
     const isFirstFrame = !n._boxWidth;
@@ -612,7 +840,9 @@ function drawAboutDescriptionNode(n, i, nodeAlpha, dpr) {
   state.ctx.font = `${CFG.DESCRIPTION.FONT_SIZE * dpr}px StraightNarrow, sans-serif`;
   
   if (n.description) {
-    const wrappedLines = wrapText(state.ctx, n.description, CFG.DESCRIPTION.TEXT_MAX_WIDTH);
+    // Calculate responsive max width based on canvas size
+    const maxWidth = state.ctx.canvas.width * CFG.DESCRIPTION.TEXT_MAX_WIDTH_RATIO;
+    const wrappedLines = wrapText(state.ctx, n.description, maxWidth);
     const boxSize = calculateTextBoxSize(state.ctx, wrappedLines, CFG.DESCRIPTION.LINE_HEIGHT, CFG.DESCRIPTION.PADDING);
     
     const isFirstFrame = !n._boxWidth;
@@ -867,10 +1097,12 @@ export function hitTestAtScreen(px, py) {
       const rectW = CFG.RECT.w * scale;
       const rectH = isMain ? CFG.RECT.h * scale : CFG.RECT.h;
       const labelWidth = measureTextWidth(n.label, fontSize);
-      const rx = screenX - rectW / 2;
-      const ry = n.y - rectH / 2;
-      const w = rectW + 8 + labelWidth;
-      const h = Math.max(rectH, fontSize * (window.devicePixelRatio || 1));
+      const dpr = window.devicePixelRatio || 1;
+      const pad = (CFG.SLUG?.HOVER_PADDING || 0) * dpr;
+      const rx = screenX - rectW / 2 - pad;
+      const ry = n.y - rectH / 2 - pad;
+      const w = rectW + 8 + labelWidth + pad * 2;
+      const h = Math.max(rectH, fontSize * dpr) + pad * 2;
       if (px >= rx && px <= rx + w && py >= ry && py <= ry + h) return i;
     }
   }
@@ -937,7 +1169,10 @@ export function getDescriptionBoxPosition(node) {
     return { dx: node.x, dy: node.y };
   }
   
-  switch (CFG.DESCRIPTION.ANCHOR_POINT) {
+  // Use node's anchor point if defined, otherwise fallback to desktop default
+  const anchorPoint = node.anchorPoint || CFG.DESCRIPTION.DESKTOP.ANCHOR_POINT;
+  
+  switch (anchorPoint) {
     case "top-left":
       return { dx: node.x, dy: node.y };
     case "top-right":
@@ -957,7 +1192,10 @@ export function getDescriptionBoxCenter(node) {
     return { x: node.x, y: node.y };
   }
   
-  switch (CFG.DESCRIPTION.ANCHOR_POINT) {
+  // Use node's anchor point if defined, otherwise fallback to desktop default
+  const anchorPoint = node.anchorPoint || CFG.DESCRIPTION.DESKTOP.ANCHOR_POINT;
+  
+  switch (anchorPoint) {
     case "top-left":
       return { x: node.x + node._boxWidth / 2, y: node.y + node._boxHeight / 2 };
     case "top-right":

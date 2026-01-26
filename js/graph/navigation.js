@@ -54,6 +54,41 @@ export async function loadAbout() {
   return cache.about;
 }
 
+// ============= HELPER FUNCTIONS =============
+
+// Check if current viewport is mobile
+export function isMobile() {
+  return window.innerWidth <= CFG.MEDIA.MOBILE_BREAKPOINT;
+}
+
+// Calculate media scale based on total media count
+// More media = smaller scale (inverse relationship)
+export function calculateMediaScale(mediaCount) {
+  const minCount = CFG.MEDIA.SCALE_THRESHOLD_MIN;
+  const maxCount = CFG.MEDIA.SCALE_THRESHOLD_MAX;
+  
+  // Clamp count between thresholds
+  const clampedCount = Math.max(minCount, Math.min(maxCount, mediaCount));
+  
+  // Linear interpolation: 1 media = SCALE_MAX, 6+ media = SCALE_MIN
+  const t = (clampedCount - minCount) / (maxCount - minCount);
+  const baseScale = CFG.MEDIA.SCALE_MAX - t * (CFG.MEDIA.SCALE_MAX - CFG.MEDIA.SCALE_MIN);
+  
+  // Add small random variation
+  const variation = (Math.random() - 0.5) * 2 * CFG.MEDIA.SCALE_VARIATION;
+  return Math.max(CFG.MEDIA.SCALE_MIN, Math.min(CFG.MEDIA.SCALE_MAX, baseScale + variation));
+}
+
+// Get media spawn area based on device type
+export function getMediaSpawnArea() {
+  return isMobile() ? CFG.MEDIA.MOBILE : CFG.MEDIA.DESKTOP;
+}
+
+// Get description spawn area based on device type
+export function getDescriptionSpawnArea() {
+  return isMobile() ? CFG.DESCRIPTION.MOBILE : CFG.DESCRIPTION.DESKTOP;
+}
+
 // ============= NODE FACTORY FUNCTIONS =============
 
 export function createMainNode(label, hash, index, width, height) {
@@ -109,13 +144,28 @@ export function createGrandchildNode(label, hash, x, y, parentIndex, category = 
   };
 }
 
-export function createMediaNode(mediaItem, projectIndex, mediaIndex) {
-  const projectNode = state.nodes[projectIndex];
-  const angle = CFG.MEDIA.SECTOR_ANGLE_MIN + Math.random() * (CFG.MEDIA.SECTOR_ANGLE_MAX - CFG.MEDIA.SECTOR_ANGLE_MIN);
-  const individualDistance = CFG.MEDIA.MIN_DISTANCE + Math.random() * (CFG.MEDIA.MAX_DISTANCE - CFG.MEDIA.MIN_DISTANCE);
-  const individualScale = CFG.MEDIA.SCALE_MIN + Math.random() * (CFG.MEDIA.SCALE_MAX - CFG.MEDIA.SCALE_MIN);
-  const baseX = projectNode.x + Math.cos(angle) * individualDistance;
-  const baseY = projectNode.y + Math.sin(angle) * individualDistance;
+export function createMediaNode(mediaItem, projectIndex, mediaIndex, totalMediaCount) {
+  const canvasWidth = state.ctx.canvas.width;
+  const canvasHeight = state.ctx.canvas.height;
+  
+  // Get spawn area based on device type
+  const area = getMediaSpawnArea();
+  
+  // Calculate scale based on total media count
+  const individualScale = calculateMediaScale(totalMediaCount);
+  
+  // Calculate margin to keep media inside bounds (half of scaled size)
+  const margin = CFG.MEDIA.SIZE * individualScale / 2;
+  
+  // Calculate spawn bounds
+  const minX = area.X_MIN * canvasWidth + margin;
+  const maxX = area.X_MAX * canvasWidth - margin;
+  const minY = area.Y_MIN * canvasHeight + margin;
+  const maxY = area.Y_MAX * canvasHeight - margin;
+  
+  // Random position within the area
+  const baseX = minX + Math.random() * Math.max(0, maxX - minX);
+  const baseY = minY + Math.random() * Math.max(0, maxY - minY);
   
   return {
     kind: "media",
@@ -131,7 +181,6 @@ export function createMediaNode(mediaItem, projectIndex, mediaIndex) {
     targetTimer: 0,
     targetX: baseX,
     targetY: baseY,
-    _individualDistance: individualDistance,
     _individualScale: individualScale,
     _zIndex: 0,
     _imageWidth: null,
@@ -143,10 +192,14 @@ export function createDescriptionNode(project, projectIndex) {
   const canvasWidth = state.ctx.canvas.width;
   const canvasHeight = state.ctx.canvas.height;
   
-  const randomX = CFG.DESCRIPTION.VIEWPORT_X_MIN + Math.random() * (CFG.DESCRIPTION.VIEWPORT_X_MAX - CFG.DESCRIPTION.VIEWPORT_X_MIN);
-  const randomY = CFG.DESCRIPTION.VIEWPORT_Y_MIN + Math.random() * (CFG.DESCRIPTION.VIEWPORT_Y_MAX - CFG.DESCRIPTION.VIEWPORT_Y_MIN);
+  // Get spawn area based on device type
+  const area = getDescriptionSpawnArea();
   
-  let anchorX = randomX * canvasWidth;
+  // X is fixed, Y is random within range
+  const fixedX = area.X_FIXED;
+  const randomY = area.Y_MIN + Math.random() * (area.Y_MAX - area.Y_MIN);
+  
+  let anchorX = fixedX * canvasWidth;
   let anchorY = randomY * canvasHeight;
   
   const margin = 50;
@@ -162,6 +215,7 @@ export function createDescriptionNode(project, projectIndex) {
     kind: "description",
     description: descriptionText,
     projectIndex,
+    anchorPoint: area.ANCHOR_POINT,
     x: anchorX,
     y: anchorY,
     vx: 0,
@@ -327,8 +381,9 @@ export async function enterProjectMode(projectIndex, categorySlug, projectSlug) 
       
       if (project.media) {
         const validMedia = project.media.filter(m => m.type && m.src);
+        const totalMediaCount = validMedia.length;
         for (let i = 0; i < validMedia.length; i++) {
-          const mediaNode = createMediaNode(validMedia[i], projectIndex, i);
+          const mediaNode = createMediaNode(validMedia[i], projectIndex, i, totalMediaCount);
           state.nodes.push(mediaNode);
         }
       }
@@ -744,6 +799,11 @@ function handlePointerUp() {
       draggedNode.vx = 0;
       draggedNode.vy = 0;
       draggedNode.targetTimer = 1e9;
+      
+      // Mark media as manually moved (ignores boundary clamping)
+      if (draggedNode.kind === "media") {
+        draggedNode._manuallyMoved = true;
+      }
     }
     state.draggedNodeIndex = -1;
     state.dragOffsetX = 0;

@@ -25,7 +25,9 @@ export const CHILD = {
   MIN_DISTANCE: 260, // minimum distance focus->child
   SECTOR_HALF_ANGLE: Math.PI / 6, // ±30° around east
   SHRINK_SCALE: 0.85, // scale for non-selected categories in category mode
-  X_OFFSET: 0 // pixels added to child X position
+  X_OFFSET: 0, // pixels added to child X position
+  SEPARATION: 280, // minimum distance between child nodes (pixels)
+  REPULSION_STRENGTH: 0.4  // strength of separation force
 };
 
 // Grandchild nodes (projects)
@@ -33,34 +35,71 @@ export const GRANDCHILD = {
   WANDER_RADIUS: 400, // wander around category node
   SPEED_SCALE: 1,
   SECTOR_HALF_ANGLE: Math.PI / 3, // ±60° around east
-  X_OFFSET: 0 // pixels added to grandchild X position
+  X_OFFSET: 0, // pixels added to grandchild X position
+  SEPARATION: 200, // minimum distance between grandchild nodes (pixels)
+  REPULSION_STRENGTH: 0.3 // strength of separation force
 };
 
 // Media nodes (project images/videos)
 export const MEDIA = {
-  SIZE: 1000, // size of media thumbnail in pixels
-  MIN_DISTANCE: 300, // minimum distance from project node
-  MAX_DISTANCE: 1300, // maximum distance from project node
+  SIZE: 1000, // base size of media thumbnail in pixels
   OSCILLATION_SPEED: 0.8, // speed factor for media movement
-  SCALE_MIN: 0.5, // minimum scale for media thumbnails (0.6 = 60% size)
-  SCALE_MAX: 1.0, // maximum scale for media thumbnails (1.0 = 100% size)
-  SECTOR_ANGLE_MIN: -Math.PI * 0.9, // start angle of sector
-  SECTOR_ANGLE_MAX: -Math.PI * 1.3, // end angle of sector
   BORDER_WIDTH: 2, // border thickness for media thumbnails in pixels
-  BRACKET_PADDING: 8 // extra padding for hover brackets around media (in CSS pixels)
+  BRACKET_PADDING: 8, // extra padding for hover brackets around media (in CSS pixels)
+  
+  // Repulsion between media (keeps them spread out)
+  SEPARATION: 600, // minimum distance between media centers (pixels)
+  REPULSION_STRENGTH: 0.5, // strength of separation force
+  
+  // Dynamic scale based on media count
+  SCALE_MIN: 0.5, // minimum scale (used when many media)
+  SCALE_MAX: 1.0, // maximum scale (used when few media)
+  SCALE_THRESHOLD_MIN: 1, // 1 media = max scale
+  SCALE_THRESHOLD_MAX: 6, // 6+ media = min scale
+  SCALE_VARIATION: 0.1, // random variation (±10%)
+  
+  // Breakpoint for mobile detection
+  MOBILE_BREAKPOINT: 480,
+  
+  // Spawn area DESKTOP (media on left side)
+  DESKTOP: {
+    X_MIN: 0.03, // 3% from left edge
+    X_MAX: 0.45, // up to 45%
+    Y_MIN: 0.10, // 10% from top
+    Y_MAX: 0.90  // up to 90%
+  },
+  
+  // Spawn area MOBILE (media on top)
+  MOBILE: {
+    X_MIN: 0.05,
+    X_MAX: 0.95,
+    Y_MIN: 0.08,
+    Y_MAX: 0.45
+  }
 };
 
 // Description text formatting (project descriptions)
 export const DESCRIPTION = {
-  TEXT_MAX_WIDTH: 1800, // max width for text wrapping
+  TEXT_MAX_WIDTH_RATIO: 0.45, // max width as ratio of canvas width (responsive)
   FONT_SIZE: 14, // font size for description text
   LINE_HEIGHT: 40, // line height for description text
-  PADDING: 20, // space between text and corner brackets
-  VIEWPORT_X_MIN: 0.93, // min horizontal position (ratio of canvas width)
-  VIEWPORT_X_MAX: 1, // max horizontal position
-  VIEWPORT_Y_MIN: 0.08, // min vertical position (ratio of canvas height)
-  VIEWPORT_Y_MAX: 0.22, // max vertical position
-  ANCHOR_POINT: "top-right" // anchor point for positioning: "center", "top-left", "top-right", "bottom-left", "bottom-right"
+  PADDING: 18, // space between text and corner brackets
+  
+  // Spawn area DESKTOP (description in top-right corner)
+  DESKTOP: {
+    X_FIXED: 0.98, // fixed horizontal position (far right)
+    Y_MIN: 0.05, // from top
+    Y_MAX: 0.11, // 
+    ANCHOR_POINT: "top-right"
+  },
+  
+  // Spawn area MOBILE (description on bottom)
+  MOBILE: {
+    X_FIXED: 0.95, // slightly scaled from desktop
+    Y_MIN: 0.55,
+    Y_MAX: 0.85,
+    ANCHOR_POINT: "top-right"
+  }
 };
 
 // Text content formatting (for ABOUT/CONTACTS text)
@@ -102,6 +141,11 @@ export const CURSOR = {
   BRACKET_LENGTH: 16, // px corner bracket length (base, scaled by DPR)
   BRACKET_OFFSET: 4, // px distance from box edges
   TRANSITION_MS: 120 // crosshair <-> brackets animation duration
+};
+
+// Slug (title) hover detection
+export const SLUG = {
+  HOVER_PADDING: 16 // extra pixels around slug for easier hover detection
 };
 
 
