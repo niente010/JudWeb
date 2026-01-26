@@ -676,6 +676,9 @@ function drawMediaNode(n, i, nodeAlpha, dpr) {
         n._imgElement.src = n.mediaSrc;
         n._imgElement.alt = n.label || 'Media';
         n._imgElement.draggable = false;
+        // Hide until dimensions are calculated
+        n._imgElement.style.display = 'none';
+        n._imageLoaded = false;
         n._imgElement.onload = () => {
           const imgWidth = n._imgElement.naturalWidth;
           const imgHeight = n._imgElement.naturalHeight;
@@ -688,15 +691,20 @@ function drawMediaNode(n, i, nodeAlpha, dpr) {
             n._imageHeight = CFG.MEDIA.SIZE;
             n._imageWidth = CFG.MEDIA.SIZE * aspectRatio;
           }
+          n._imageLoaded = true;
         };
         n._imgElement.onerror = () => {
           n._imageFailed = true;
           n._imageWidth = CFG.MEDIA.SIZE;
           n._imageHeight = CFG.MEDIA.SIZE;
+          n._imageLoaded = true;
         };
         overlay.appendChild(n._imgElement);
       }
     }
+    
+    // Don't render until image is loaded with correct dimensions
+    if (!n._imageLoaded) return;
     
     const baseWidth = n._imageWidth || CFG.MEDIA.SIZE;
     const baseHeight = n._imageHeight || CFG.MEDIA.SIZE;

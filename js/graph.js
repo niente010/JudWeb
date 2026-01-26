@@ -1,5 +1,5 @@
 // Graph visualization - Public API
-import { state, step, draw, computeMainAnchors, clamp } from './graph/engine.js';
+import { state, step, draw, computeMainAnchors, clamp, cleanupGifElements } from './graph/engine.js';
 import { setupInteraction, createMainNode } from './graph/navigation.js';
 import * as CFG from './graph/config.js';
 
@@ -48,6 +48,8 @@ export function stopGraph() {
     cancelAnimationFrame(state.animationHandle);
     state.animationHandle = null;
   }
+  // Clean up any HTML image elements from media nodes
+  cleanupGifElements();
   if (state.ctx) {
     const { canvas } = state.ctx;
     state.ctx.clearRect(0, 0, canvas.width, canvas.height);
