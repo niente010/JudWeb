@@ -1,6 +1,16 @@
 media:
-  input: media
-  output: media
+  - name: visuals
+    label: Visuals Media
+    input: media/visuals
+    output: media/visuals
+  - name: algolab
+    label: AlgoLab Media
+    input: media/algolab
+    output: media/algolab
+  - name: installations
+    label: Installations Media
+    input: media/installations
+    output: media/installations
 
 content:
   # Progetti del Portfolio
@@ -9,18 +19,23 @@ content:
     path: data
     filename: projects.json
     type: collection
+    format: json
     view:
       fields: [title, category, year]
       primary: title
-      sort: year
-      order: desc
+      sort: [year, title]
+      default:
+        sort: year
+        order: desc
     fields:
       - name: slug
         label: Slug (URL)
         type: string
         required: true
         description: Identificatore univoco per l'URL (es. "nome-progetto", senza spazi)
-        pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        pattern:
+          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: "Lo slug deve contenere solo lettere minuscole, numeri e trattini"
 
       - name: title
         label: Titolo
@@ -33,12 +48,13 @@ content:
         type: select
         required: true
         options:
-          - label: Visuals
-            value: visuals
-          - label: AlgoLab
-            value: algolab
-          - label: Installations
-            value: installations
+          values:
+            - value: visuals
+              label: Visuals
+            - value: algolab
+              label: AlgoLab
+            - value: installations
+              label: Installations
         description: Categoria del progetto
 
       - name: year
@@ -66,10 +82,11 @@ content:
             type: select
             required: true
             options:
-              - label: Immagine
-                value: image
-              - label: Video
-                value: video
+              values:
+                - value: image
+                  label: Immagine
+                - value: video
+                  label: Video
             default: image
 
           - name: src
@@ -108,9 +125,9 @@ content:
   # Pagina About
   - name: about
     label: About
-    path: data
-    filename: about.json
+    path: data/about.json
     type: file
+    format: json
     fields:
       - name: text
         label: Biografia
@@ -124,6 +141,7 @@ content:
     path: data
     filename: contacts.json
     type: collection
+    format: json
     view:
       fields: [name, url]
       primary: name
@@ -139,7 +157,9 @@ content:
         type: string
         required: true
         description: Identificatore univoco
-        pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        pattern:
+          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: "Lo slug deve contenere solo lettere minuscole, numeri e trattini"
 
       - name: url
         label: URL
