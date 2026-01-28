@@ -1,0 +1,148 @@
+media:
+  input: media
+  output: media
+
+content:
+  # Progetti del Portfolio
+  - name: projects
+    label: Progetti
+    path: data
+    filename: projects.json
+    type: collection
+    view:
+      fields: [title, category, year]
+      primary: title
+      sort: year
+      order: desc
+    fields:
+      - name: slug
+        label: Slug (URL)
+        type: string
+        required: true
+        description: Identificatore univoco per l'URL (es. "nome-progetto", senza spazi)
+        pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+
+      - name: title
+        label: Titolo
+        type: string
+        required: true
+        description: Nome del progetto
+
+      - name: category
+        label: Categoria
+        type: select
+        required: true
+        options:
+          - label: Visuals
+            value: visuals
+          - label: AlgoLab
+            value: algolab
+          - label: Installations
+            value: installations
+        description: Categoria del progetto
+
+      - name: year
+        label: Anno
+        type: number
+        required: true
+        description: Anno di realizzazione del progetto
+
+      - name: description
+        label: Descrizione
+        type: text
+        list: true
+        required: true
+        description: Paragrafi della descrizione del progetto (ogni elemento è un paragrafo)
+
+      - name: media
+        label: Media
+        type: object
+        list: true
+        required: true
+        description: Immagini e video del progetto
+        fields:
+          - name: type
+            label: Tipo
+            type: select
+            required: true
+            options:
+              - label: Immagine
+                value: image
+              - label: Video
+                value: video
+            default: image
+
+          - name: src
+            label: File
+            type: image
+            required: true
+            description: Carica l'immagine o il video
+
+          - name: alt
+            label: Testo alternativo
+            type: string
+            required: true
+            description: Descrizione dell'immagine per accessibilità
+
+      - name: links
+        label: Link esterni
+        type: object
+        description: Link opzionali al sito web o repository
+        fields:
+          - name: site
+            label: Sito Web
+            type: string
+            description: URL del sito web del progetto
+
+          - name: repo
+            label: Repository
+            type: string
+            description: URL del repository (es. GitHub)
+
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+        description: Tag del progetto (es. "#Touchdesigner, #VJ")
+
+  # Pagina About
+  - name: about
+    label: About
+    path: data
+    filename: about.json
+    type: file
+    fields:
+      - name: text
+        label: Biografia
+        type: text
+        required: true
+        description: Testo della sezione About
+
+  # Contatti
+  - name: contacts
+    label: Contatti
+    path: data
+    filename: contacts.json
+    type: collection
+    view:
+      fields: [name, url]
+      primary: name
+    fields:
+      - name: name
+        label: Nome
+        type: string
+        required: true
+        description: Nome del contatto (es. Instagram, Email)
+
+      - name: slug
+        label: Slug
+        type: string
+        required: true
+        description: Identificatore univoco
+        pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+
+      - name: url
+        label: URL
+        type: string
+        required: true
+        description: Link al profilo o indirizzo email (mailto:)
