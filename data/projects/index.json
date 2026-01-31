@@ -415,9 +415,9 @@
     "category": "visuals",
     "year": 2024,
     "description": [
-      "Shared Frequency is a collaborative sound-work and wearable interface that transforms human gaze into musical form.",
+      "Shared Frequency is a ==collaborative sound-work and wearable interface== that transforms human gaze into musical form.",
       "Rooted in a collective workshop and built with open-source tools, the piece explores how perception—especially the act of looking—can become a shared instrument.",
-      "With the brief to create an image for the Naked Spaces project, I created two visual proposals, one following an aesthetic of flashes of light and refraction and the other a 3D element made of audio-reactive particles, presented in their exhibition space at the SEEING, AN EYE AND A BOX fair at Convent Sant Agusti."
+      "With the brief to create an image for the Naked Spaces project, I created two visual proposals, one following an aesthetic of flashes of light and refraction and the other a 3D element made of audio-reactive particles, presented in their exhibition space at the SEEING, AN EYE AND A BOX fair at ==Convent Sant Agusti==."
     ],
     "media": [
       {
@@ -425,9 +425,6 @@
         "src": "media/visuals/shared_frequency/shared_frequency01.gif",
         "alt": "SHARED FREQUENCY"
       }
-    ],
-    "tags": [
-      ""
     ]
   }
 ]
