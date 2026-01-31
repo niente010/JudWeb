@@ -854,24 +854,25 @@ function drawAboutDescriptionNode(n, i, nodeAlpha, dpr) {
     // Use clean text for box size calculation
     const cleanLines = wrapText(state.ctx, cleanText, maxWidth);
     
-    // DEBUG: verify line counts match
-    if (!n._debugLogged) {
-      console.log('ABOUT DEBUG:', {
-        tokenizedLinesCount: tokenizedLines.length,
-        cleanLinesCount: cleanLines.length,
-        maxWidth,
-        canvasWidth: state.ctx.canvas.width,
-        dpr
-      });
-      n._debugLogged = true;
+    // Calculate box size with paragraph spacing
+    const paragraphSpacing = CFG.ABOUT.LINE_HEIGHT * 0.5; // Extra space for empty lines
+    let totalHeight = CFG.ABOUT.PADDING * 2;
+    for (const line of cleanLines) {
+      totalHeight += line === '' ? paragraphSpacing : CFG.ABOUT.LINE_HEIGHT;
     }
     
-    const boxSize = calculateTextBoxSize(state.ctx, cleanLines, CFG.ABOUT.LINE_HEIGHT, CFG.ABOUT.PADDING);
+    // Get max width for box
+    let maxLineWidth = 0;
+    for (const line of cleanLines) {
+      const metrics = state.ctx.measureText(line);
+      if (metrics.width > maxLineWidth) maxLineWidth = metrics.width;
+    }
+    const boxWidth = maxLineWidth + CFG.ABOUT.PADDING * 2;
     
     const isFirstFrame = !n._boxWidth;
-    if (!n._boxWidth || n._boxWidth !== boxSize.width) {
-      n._boxWidth = boxSize.width;
-      n._boxHeight = boxSize.height;
+    if (!n._boxWidth || n._boxWidth !== boxWidth || n._boxHeight !== totalHeight) {
+      n._boxWidth = boxWidth;
+      n._boxHeight = totalHeight;
     }
     
     if (isFirstFrame) {
@@ -883,9 +884,15 @@ function drawAboutDescriptionNode(n, i, nodeAlpha, dpr) {
     const dy = n.y - n._boxHeight / 2;
     
     state.ctx.textBaseline = "top";
-    const startY = dy + CFG.ABOUT.PADDING;
+    let currentY = dy + CFG.ABOUT.PADDING;
     tokenizedLines.forEach((tokens, idx) => {
-      drawHighlightedTokens(state.ctx, tokens, dx + CFG.ABOUT.PADDING, startY + idx * CFG.ABOUT.LINE_HEIGHT, dpr, CFG.ABOUT.FONT_SIZE);
+      if (tokens.length === 0) {
+        // Empty line = paragraph break, add extra spacing
+        currentY += paragraphSpacing;
+      } else {
+        drawHighlightedTokens(state.ctx, tokens, dx + CFG.ABOUT.PADDING, currentY, dpr, CFG.ABOUT.FONT_SIZE);
+        currentY += CFG.ABOUT.LINE_HEIGHT;
+      }
     });
   }
   state.ctx.restore();
@@ -1141,41 +1148,50 @@ export function measureTextWidth(text, fontSize = 16) {
 }
 
 // Parse text into word tokens with highlight info
-// Returns array of { word: string, highlighted: boolean }
+// Words are split by spaces only - punctuation stays attached to words
+// Returns array of { word: string, highlighted: boolean, isSpace: boolean }
 export function tokenizeWithHighlights(text) {
-  const tokens = [];
+  // First, remove markers and track which character positions are highlighted
+  const highlightMap = [];
+  let cleanText = '';
   let inHighlight = false;
-  let currentWord = '';
   
   for (let i = 0; i < text.length; i++) {
-    // Check for == marker
     if (text[i] === '=' && text[i + 1] === '=') {
-      // Save current word if any
-      if (currentWord) {
-        tokens.push({ word: currentWord, highlighted: inHighlight });
-        currentWord = '';
-      }
       inHighlight = !inHighlight;
       i++; // Skip second =
       continue;
     }
-    
-    // Check for space or newline (word boundary)
-    if (text[i] === ' ' || text[i] === '\n') {
+    cleanText += text[i];
+    highlightMap.push(inHighlight);
+  }
+  
+  // Now tokenize the clean text by spaces, preserving highlight info
+  const tokens = [];
+  let currentWord = '';
+  let wordHighlighted = false;
+  
+  for (let i = 0; i < cleanText.length; i++) {
+    if (cleanText[i] === ' ' || cleanText[i] === '\n') {
       if (currentWord) {
-        tokens.push({ word: currentWord, highlighted: inHighlight });
+        tokens.push({ word: currentWord, highlighted: wordHighlighted, isSpace: false });
         currentWord = '';
+        wordHighlighted = false;
       }
       tokens.push({ word: ' ', highlighted: false, isSpace: true });
       continue;
     }
     
-    currentWord += text[i];
+    currentWord += cleanText[i];
+    // Word is highlighted if ANY character in it is highlighted
+    if (highlightMap[i]) {
+      wordHighlighted = true;
+    }
   }
   
   // Don't forget last word
   if (currentWord) {
-    tokens.push({ word: currentWord, highlighted: inHighlight });
+    tokens.push({ word: currentWord, highlighted: wordHighlighted, isSpace: false });
   }
   
   return tokens;
@@ -1228,9 +1244,9 @@ export function wrapTextWithHighlightTokens(context, text, maxWidth) {
   const cleanText = stripHighlightMarkers(text);
   const cleanLines = wrapText(context, cleanText, maxWidth);
   
-  // Tokenize the entire original text to get words with highlight info
+  // Tokenize the original text - now tokens match clean text exactly
   const allTokens = tokenizeWithHighlights(text);
-  // Filter out spaces and newline-related tokens, keep only actual words
+  // Filter out spaces, keep only actual words
   const allWords = allTokens.filter(t => !t.isSpace && t.word.trim() !== '');
   
   const result = [];
@@ -1250,6 +1266,12 @@ export function wrapTextWithHighlightTokens(context, text, maxWidth) {
     for (let i = 0; i < cleanWords.length && wordIndex < allWords.length; i++) {
       if (i > 0) {
         lineTokens.push({ word: ' ', highlighted: false, isSpace: true });
+      }
+      // Verify words match (for debugging)
+      const tokenWord = allWords[wordIndex].word;
+      const cleanWord = cleanWords[i];
+      if (tokenWord !== cleanWord) {
+        console.warn('Word mismatch:', { tokenWord, cleanWord, wordIndex, i });
       }
       lineTokens.push(allWords[wordIndex]);
       wordIndex++;
