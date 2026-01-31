@@ -456,7 +456,9 @@ function showGalleryOverlay(mediaNode) {
   if (mediaNode.mediaType === 'video' && mediaNode.externalLink) {
     // YouTube embed for video type
     const iframe = document.createElement('iframe');
-    iframe.src = mediaNode.externalLink + '?autoplay=1';
+    // Add autoplay parameter correctly (use & if URL already has parameters)
+    const separator = mediaNode.externalLink.includes('?') ? '&' : '?';
+    iframe.src = mediaNode.externalLink + separator + 'autoplay=1';
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
     iframe.allowFullscreen = true;
     wrapper.appendChild(iframe);
@@ -587,8 +589,11 @@ function handlePointerDown(e, canvas) {
   }
   
   if (n.kind === "media") {
-    // Click on media enters gallery mode
-    enterGalleryMode(idx);
+    // Start tracking for click vs drag detection
+    state.pendingMediaClick = idx;
+    state.pendingMediaStartX = x;
+    state.pendingMediaStartY = y;
+    state.mediaIsDragging = false;
     e.preventDefault();
   } else if (n.kind === "description" || n.kind === "aboutDescription") {
     startDrag(idx, x, y);
@@ -687,6 +692,20 @@ function handlePointerMove(e, canvas) {
   const rect = canvas.getBoundingClientRect();
   const x = (e.clientX - rect.left) * (canvas.width / rect.width);
   const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+  
+  // Check if we should convert pending media click to drag
+  if (state.pendingMediaClick >= 0 && !state.mediaIsDragging) {
+    const dx = x - state.pendingMediaStartX;
+    const dy = y - state.pendingMediaStartY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const DRAG_THRESHOLD = 8; // pixels of movement to start drag
+    
+    if (distance > DRAG_THRESHOLD) {
+      // Convert to drag
+      state.mediaIsDragging = true;
+      startDrag(state.pendingMediaClick, state.pendingMediaStartX, state.pendingMediaStartY);
+    }
+  }
   
   if (state.draggedNodeIndex >= 0) {
     handleDrag(x, y, rect);
@@ -886,6 +905,18 @@ function getFontSizeForIndex(i) {
 }
 
 function handlePointerUp() {
+  // Check if this was a click on media (not a drag)
+  if (state.pendingMediaClick >= 0 && !state.mediaIsDragging) {
+    // It was a click, open gallery
+    enterGalleryMode(state.pendingMediaClick);
+  }
+  
+  // Reset pending media state
+  state.pendingMediaClick = -1;
+  state.pendingMediaStartX = 0;
+  state.pendingMediaStartY = 0;
+  state.mediaIsDragging = false;
+  
   if (state.draggedNodeIndex >= 0) {
     const draggedNode = state.nodes[state.draggedNodeIndex];
     if (draggedNode) {
@@ -907,6 +938,12 @@ function handlePointerUp() {
 }
 
 function handlePointerLeave() {
+  // Reset pending media state
+  state.pendingMediaClick = -1;
+  state.pendingMediaStartX = 0;
+  state.pendingMediaStartY = 0;
+  state.mediaIsDragging = false;
+  
   if (state.draggedNodeIndex >= 0) {
     state.draggedNodeIndex = -1;
     state.dragOffsetX = 0;

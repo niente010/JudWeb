@@ -23,12 +23,12 @@ content:
     exclude:
       - index.json
     view:
-      fields: [title, category, year]
+      fields: [title, category]
       primary: title
-      sort: [year, title]
+      sort: [title]
       default:
-        sort: year
-        order: desc
+        sort: title
+        order: asc
     fields:
       - name: slug
         label: Slug (URL)
@@ -58,12 +58,6 @@ content:
             - value: installations
               label: Installations
         description: Project category
-
-      - name: year
-        label: Year
-        type: number
-        required: true
-        description: Year of creation
 
       - name: description
         label: Description
@@ -98,25 +92,15 @@ content:
             description: Upload the image or video
 
           - name: alt
-            label: Alt Text
+            label: Alt Text / Caption
             type: string
             required: true
-            description: Image description for accessibility
+            description: Image description (shown as caption in gallery mode)
 
-      - name: links
-        label: External Links
-        type: object
-        description: Optional links to website or repository
-        fields:
-          - name: site
-            label: Website
+          - name: externalLink
+            label: External Link (YouTube Embed)
             type: string
-            description: Project website URL
-
-          - name: repo
-            label: Repository
-            type: string
-            description: Repository URL (e.g. GitHub)
+            description: "YouTube embed URL for video type (e.g. https://www.youtube.com/embed/VIDEO_ID)"
 
       - name: tags
         label: Tags

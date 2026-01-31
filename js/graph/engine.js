@@ -35,7 +35,13 @@ export const state = {
   
   // Gallery mode
   galleryMode: false,
-  galleryMediaIndex: -1
+  galleryMediaIndex: -1,
+  
+  // Media click vs drag detection
+  pendingMediaClick: -1,      // Index of media that might be clicked
+  pendingMediaStartX: 0,      // Start position for drag detection
+  pendingMediaStartY: 0,
+  mediaIsDragging: false      // True if user started dragging
 };
 
 // Helper to check if a node can resume movement after hover
@@ -931,8 +937,9 @@ function drawTextContentNode(n, i, nodeAlpha, dpr) {
 }
 
 function drawMediaNode(n, i, nodeAlpha, dpr) {
-  if (n.mediaType === 'image' && n.mediaSrc) {
-    // Create HTML img element for ALL images (allows proper z-index ordering)
+  // Show preview image for both 'image' and 'video' types (video uses GIF as preview)
+  if ((n.mediaType === 'image' || n.mediaType === 'video') && n.mediaSrc) {
+    // Create HTML img element for ALL media (allows proper z-index ordering)
     if (!n._imgElement) {
       const overlay = document.getElementById('gif-overlay');
       if (overlay) {

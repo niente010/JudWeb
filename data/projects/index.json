@@ -257,29 +257,34 @@
     ],
     "media": [
       {
-        "type": "image",
+        "type": "video",
         "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz01.gif",
-        "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ"
+        "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ",
+        "externalLink": "https://www.youtube.com/embed/p7-lcELGnhk?si=5IUoiWUX0Fs49ER0"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz02.gif",
-        "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ"
+        "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ",
+        "externalLink": "https://www.youtube.com/embed/qKdga4P_1C8?si=T_LQxIaY0n5bs9qe"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz03.gif",
-        "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ"
+        "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ",
+        "externalLink": "https://www.youtube.com/embed/lyA-2otChl4?si=Y5zJln0BimvYFu_z"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz04.gif",
-        "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ"
+        "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ",
+        "externalLink": "https://www.youtube.com/embed/pIiLb6W_5gc?si=2A592Z_2CXPz5STi"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz05.gif",
-        "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ"
+        "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ",
+        "externalLink": "https://www.youtube.com/embed/v9FHoJoy_Jo?si=ibpceUGGoXpQdDsM"
       }
     ],
     "tags": [
