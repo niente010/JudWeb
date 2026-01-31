@@ -188,9 +188,10 @@
         "alt": "Lost & Found"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/algolab/lostnfound/lostnfound03.gif",
-        "alt": "Lost & Found"
+        "alt": "Lost & Found",
+        "externalLink": "www.youtube.com/embed/7PWx36Zrd-o?si=mi_8Co94iZrLTPYO"
       }
     ]
   },
