@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'data/projects/*.json'
-      - '!data/projects/_index.json'
+      - '!data/projects/index.json'
   workflow_dispatch:
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
 
           # Leggi tutti i file JSON nella cartella projects (escluso _index.json)
           for filepath in sorted(projects_dir.glob('*.json')):
-              if filepath.name == '_index.json':
+              if filepath.name == 'index.json':
                   continue
               
               try:
@@ -46,7 +46,7 @@ jobs:
           projects.sort(key=lambda p: (-p.get('year', 0), p.get('title', '')))
 
           # Scrivi l'indice
-          index_path = projects_dir / '_index.json'
+          index_path = projects_dir / 'index.json'
           with open(index_path, 'w', encoding='utf-8') as f:
               json.dump(projects, f, indent=2, ensure_ascii=False)
 
@@ -57,6 +57,6 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add data/projects/_index.json
+          git add data/projects/index.json
           git diff --staged --quiet || git commit -m "chore: update projects index [skip ci]"
           git push

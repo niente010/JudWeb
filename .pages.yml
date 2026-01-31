@@ -21,7 +21,7 @@ content:
     format: json
     filename: "{slug}.json"
     exclude:
-      - _index.json
+      - index.json
     view:
       fields: [title, category, year]
       primary: title
