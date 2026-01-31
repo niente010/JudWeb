@@ -1,0 +1,35 @@
+{
+  "slug": "universal-remedy",
+  "title": "Universal Remedy",
+  "category": "algolab",
+  "year": 2025,
+  "description": [
+    "\"The adjustment of reality to the masses and of the masses to reality is a process of unlimited scope, as much for thinking as for perception.\"",
+    "- Walter Benjamin",
+    "Universal Remedy is a conceptual installation that explores the deep entanglement between perception and reality. Drawing from Walter Benjamin's idea that perception is a world-shaping force, the project centres on umwelt, the notion that each living being experiences reality through its unique mode of sensing. From the echolocation of bats to the chemical sensitivity of plants, perception is plural, layered, and specific.",
+    "The installation takes the form of a symbolic sphere composed of eye-like forms drawn from different species, including those without visual organs. Rather than replicating how other beings perceive, the work assembles a poetic constellation of diverse perspectives. The sphere acts as a visual metaphor for multispecies presence, inviting the viewer to imagine a shared world built on perceptual difference.",
+    "Universal Remedy offers a contemplative environment that invites viewers to consider the vast array of perceptual realities that shape life on Earth.  By shifting attention toward unfamiliar ways of engaging with the world, the installation asks what forms of experience we allow to matter.",
+    "While grounded in digital media, the work echoes older knowledge systems, when perception was linked to myth, ecology, and ritual. It imagines a future where ways of seeing and sensing are shared, distributed, and relational.",
+    "The \"remedy\" proposed is not a solution, but a shift toward perception as relation, attention as care, and seeing as mutual presence. It invites us to reimagine perception as a collective and transformative act."
+  ],
+  "media": [
+    {
+      "type": "image",
+      "src": "media/algolab/universal_remedy/universal_remedy01.webp",
+      "alt": "Universal Remedy"
+    },
+    {
+      "type": "image",
+      "src": "media/algolab/universal_remedy/universal_remedy02.gif",
+      "alt": "Universal Remedy"
+    },
+    {
+      "type": "image",
+      "src": "media/algolab/universal_remedy/universal_remedy03.gif",
+      "alt": "Universal Remedy"
+    }
+  ],
+  "tags": [
+    ""
+  ]
+}

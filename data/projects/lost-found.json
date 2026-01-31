@@ -1,0 +1,35 @@
+{
+  "slug": "lost&found",
+  "title": "Lost & Found",
+  "category": "algolab",
+  "year": 2025,
+  "description": [
+    "Lost&Found is an audiovisual installation that explores the intersection between the vegetal, the material, and the algorithmic. It seeks to ask: Can technology help us reconnect with the nature that surrounds us?",
+    "In an increasingly hyper-mediated and digitally saturated society, Lost&Found turns its attention to the silent and continuous activity of plants — beings that perceive, respond, and communicate in ways we are only beginning to understand.",
+    "At the heart of the installation is a collaboration between organic and synthetic systems. The project captures the inner electrical activity of plants through bioelectrical sensors and translates this data into real-time audiovisual outputs — creating a responsive environment where nature's subtle signals become visible and audible. The result is a living interface, where plants \"speak\" through light and sound.",
+    "Lost&Found invites the audience into a meditative space where they can attune to rhythms that are slower, more continuous, and deeply relational. By foregrounding the agency of plants and interpreting their signals through analog and digital media, we aim to dissolve the binary between nature and machine.",
+    "The installation encourages participants to imagine a present where technology is not a tool of extraction or control, but a means of interconnection and listening.",
+    "Our artistic approach draws from cybernetics, ecological thinking, and new materialism. We are particularly interested in how data — often understood in purely rational or capitalist terms — can instead become a poetic medium that reveals presence, intimacy, and relationality. Lost&Found does not seek to \"decode\" plants, but to co-create with them; it is a space of mutual sensing.",
+    "The project is also a critique of the algorithmic gaze that dominates contemporary life, often reducing complexity to efficiency. Through the use of analog technologies and tactile materials, we create a counter-space where slow time, unpredictability, and sensitivity are honored. In this way, Lost&Found becomes an embodied speculation — a proposition for new forms of intelligence, coexistence, and symbiosis."
+  ],
+  "media": [
+    {
+      "type": "image",
+      "src": "media/algolab/lostnfound/lostnfound01.webp",
+      "alt": "Lost & Found"
+    },
+    {
+      "type": "image",
+      "src": "media/algolab/lostnfound/lostnfound02.webp",
+      "alt": "Lost & Found"
+    },
+    {
+      "type": "image",
+      "src": "media/algolab/lostnfound/lostnfound03.gif",
+      "alt": "Lost & Found"
+    }
+  ],
+  "tags": [
+    ""
+  ]
+}

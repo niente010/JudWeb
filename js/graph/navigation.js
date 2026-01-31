@@ -13,9 +13,8 @@ const cache = {
 
 export async function loadProjects() {
   if (!cache.projects) {
-    const res = await fetch("data/projects.json", { cache: "no-store" });
-    const data = await res.json();
-    cache.projects = data.items;
+    const res = await fetch("data/projects/_index.json", { cache: "no-store" });
+    cache.projects = await res.json();
   }
   return cache.projects;
 }
@@ -23,10 +22,10 @@ export async function loadProjects() {
 export async function loadCategories() {
   if (cache.categories) return cache.categories;
   try {
-    const res = await fetch("data/projects.json", { cache: "no-store" });
+    const res = await fetch("data/projects/_index.json", { cache: "no-store" });
     const data = await res.json();
     const set = new Set();
-    data.items.forEach((p) => p.category && set.add(p.category));
+    data.forEach((p) => p.category && set.add(p.category));
     cache.categories = Array.from(set);
     return cache.categories;
   } catch (e) {

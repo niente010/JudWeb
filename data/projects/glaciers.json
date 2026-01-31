@@ -1,0 +1,26 @@
+{
+  "slug": "glaciers",
+  "title": "Glaciers",
+  "category": "algolab",
+  "year": 2025,
+  "description": [
+    "GLACIERS is an interactive audiovisual installation that seeks to embody the disappearance of glaciers through an intimate and sensory encounter. The piece consists of a microphone frozen inside a block of ice which, as it melts in real time, captures and transforms the subtle sounds of dripping and cracking into an amplified soundscape, accessible to the audience through headphones.",
+    "Visitors are invited not only to listen, but also to touch the ice, accelerating its melting process and becoming active participants in the work—and, by extension, in the phenomenon it represents. This interaction highlights how every human action, whether individual or collective, contributes to climate collapse.",
+    "Presented within a gallery or public space, GLACIERS functions both as a reflection of the fragility of glaciers and as a reminder of how technology, consumption, and our everyday decisions directly impact the survival of these vital ecosystems."
+  ],
+  "media": [
+    {
+      "type": "image",
+      "src": "media/algolab/glaciers/glaciers01.gif",
+      "alt": "Glaciers"
+    },
+    {
+      "type": "image",
+      "src": "media/algolab/glaciers/glaciers02.webp",
+      "alt": "Glaciers"
+    }
+  ],
+  "tags": [
+    ""
+  ]
+}

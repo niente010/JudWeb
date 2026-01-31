@@ -13,116 +13,118 @@ media:
     output: media/installations
 
 content:
-  # Progetti del Portfolio
+  # Portfolio Projects - Collection of separate files
   - name: projects
     label: Projects
-    path: data/projects.json
-    type: file
+    path: data/projects
+    type: collection
     format: json
+    filename: "{slug}.json"
+    exclude:
+      - _index.json
+    view:
+      fields: [title, category, year]
+      primary: title
+      sort: [year, title]
+      default:
+        sort: year
+        order: desc
     fields:
-      - name: items
-        label: Lista Progetti
+      - name: slug
+        label: Slug (URL)
+        type: string
+        required: true
+        description: Unique identifier for the URL (e.g. "project-name", no spaces). This also determines the file name.
+        pattern:
+          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: "Slug must contain only lowercase letters, numbers and hyphens"
+
+      - name: title
+        label: Title
+        type: string
+        required: true
+        description: Project name
+
+      - name: category
+        label: Category
+        type: select
+        required: true
+        options:
+          values:
+            - value: visuals
+              label: Visuals
+            - value: algolab
+              label: AlgoLab
+            - value: installations
+              label: Installations
+        description: Project category
+
+      - name: year
+        label: Year
+        type: number
+        required: true
+        description: Year of creation
+
+      - name: description
+        label: Description
+        type: text
+        list: true
+        required: true
+        description: Project description paragraphs (each item is a paragraph)
+
+      - name: media
+        label: Media
         type: object
-        list:
-          collapsible:
-            collapsed: false
-            summary: "{fields.title} ({fields.category} - {fields.year})"
+        list: true
+        required: true
+        description: Project images and videos
         fields:
-          - name: slug
-            label: Slug (URL)
-            type: string
-            required: true
-            description: Identificatore univoco per l'URL (es. "nome-progetto", senza spazi)
-            pattern:
-              regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-              message: "Lo slug deve contenere solo lettere minuscole, numeri e trattini"
-
-          - name: title
-            label: Title
-            type: string
-            required: true
-            description: Nome del progetto
-
-          - name: category
-            label: Category
+          - name: type
+            label: Type
             type: select
             required: true
             options:
               values:
-                - value: visuals
-                  label: Visuals
-                - value: algolab
-                  label: AlgoLab
-                - value: installations
-                  label: Installations
-            description: Categoria del progetto
+                - value: image
+                  label: Image
+                - value: video
+                  label: Video
+            default: image
 
-          - name: year
-            label: Year
-            type: number
+          - name: src
+            label: File
+            type: image
             required: true
-            description: Anno di realizzazione del progetto
+            description: Upload the image or video
 
-          - name: description
-            label: Description
-            type: text
-            list: true
-            required: true
-            description: Paragrafi della descrizione del progetto (ogni elemento è un paragrafo)
-
-          - name: media
-            label: Media
-            type: object
-            list: true
-            required: true
-            description: Immagini e video del progetto
-            fields:
-              - name: type
-                label: Type
-                type: select
-                required: true
-                options:
-                  values:
-                    - value: image
-                      label: Image
-                    - value: video
-                      label: Video
-                default: image
-
-              - name: src
-                label: File
-                type: image
-                required: true
-                description: Upload an image or video
-
-              - name: alt
-                label: Alternative text
-                type: string
-                required: true
-                description: Alternative text for accessibility
-
-          - name: links
-            label: External links
-            type: object
-            description: Optional links
-            fields:
-              - name: site
-                label: Sito Web
-                type: string
-                description: URL del sito web del progetto
-
-              - name: repo
-                label: Repository
-                type: string
-                description: URL del repository (es. GitHub)
-
-          - name: tags
-            label: Tags
+          - name: alt
+            label: Alt Text
             type: string
-            list: true
-            description: Tag del progetto (es. "#Touchdesigner, #VJ")
+            required: true
+            description: Image description for accessibility
 
-  # Pagina About
+      - name: links
+        label: External Links
+        type: object
+        description: Optional links to website or repository
+        fields:
+          - name: site
+            label: Website
+            type: string
+            description: Project website URL
+
+          - name: repo
+            label: Repository
+            type: string
+            description: Repository URL (e.g. GitHub)
+
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+        description: Project tags (e.g. "#Touchdesigner, #VJ")
+
+  # About Page
   - name: about
     label: About
     path: data/about.json
@@ -130,12 +132,12 @@ content:
     format: json
     fields:
       - name: text
-        label: Biografia
+        label: Biography
         type: text
         required: true
-        description: Testo della sezione About
+        description: About section text
 
-  # Contatti
+  # Contacts
   - name: contacts
     label: Contacts
     path: data/contacts.json
@@ -151,22 +153,22 @@ content:
             summary: "{fields.name}"
         fields:
           - name: name
-            label: Nome
+            label: Name
             type: string
             required: true
-            description: Name of the contact (e.g. Instagram, Email)
+            description: Contact name (e.g. Instagram, Email)
 
           - name: slug
             label: Slug
             type: string
             required: true
-            description: Identificatore univoco
+            description: Unique identifier
             pattern:
               regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-              message: "The slug must contain only lowercase letters, numbers and hyphens"
+              message: "Slug must contain only lowercase letters, numbers and hyphens"
 
           - name: url
             label: URL
             type: string
             required: true
-            description: Link to the profile or email address (mailto:)
+            description: Link to profile or email address (mailto:)

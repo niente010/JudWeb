@@ -1,0 +1,30 @@
+{
+  "slug": "the-nest",
+  "title": "The Nest",
+  "category": "installations",
+  "year": 2025,
+  "description": [
+    "The Nest is a new corporate identity party organiser based in Castellbisbal.",
+    "As a customised structure, I made a project proposal that included a detailed proposal, customised plans together with materials of the base structure, technical rider of the LED systems and a preview of how the piece would be finally visualised."
+  ],
+  "media": [
+    {
+      "type": "image",
+      "src": "media/installations/the nest/the_nest01.webp",
+      "alt": "The Nest"
+    },
+    {
+      "type": "image",
+      "src": "media/installations/the nest/the_nest02.webp",
+      "alt": "The Nest"
+    },
+    {
+      "type": "image",
+      "src": "media/installations/the nest/the_nest03.webp",
+      "alt": "The Nest"
+    }
+  ],
+  "tags": [
+    ""
+  ]
+}

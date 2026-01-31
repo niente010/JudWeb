@@ -1,0 +1,39 @@
+{
+  "slug": "live-son-de-rosas",
+  "title": "LIVE SON DE ROSAS",
+  "category": "visuals",
+  "year": 2024,
+  "description": [
+    "A very fun project in which I worked with video editing and AI to capture the essence of La Oreja de Van Gogh and bring dynamism to Son de Rosas' gigs."
+  ],
+  "media": [
+    {
+      "type": "image",
+      "src": "media/visuals/son_de_rosas/son_de_rosas01.gif",
+      "alt": "LIVE SON DE ROSAS"
+    },
+    {
+      "type": "image",
+      "src": "media/visuals/son_de_rosas/son_de_rosas02.gif",
+      "alt": "LIVE SON DE ROSAS"
+    },
+    {
+      "type": "image",
+      "src": "media/visuals/son_de_rosas/son_de_rosas03.gif",
+      "alt": "LIVE SON DE ROSAS"
+    },
+    {
+      "type": "image",
+      "src": "media/visuals/son_de_rosas/son_de_rosas04.gif",
+      "alt": "LIVE SON DE ROSAS"
+    },
+    {
+      "type": "image",
+      "src": "media/visuals/son_de_rosas/son_de_rosas05.gif",
+      "alt": "LIVE SON DE ROSAS"
+    }
+  ],
+  "tags": [
+    ""
+  ]
+}

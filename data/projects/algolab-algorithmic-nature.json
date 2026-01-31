@@ -1,0 +1,42 @@
+{
+  "slug": "algolab-algorithmic-nature",
+  "title": "Alghorithmic Nature",
+  "category": "algolab",
+  "year": 2025,
+  "description": [
+    "Algorithmic Nature leads into a journey where technology meets the natural world, pushing the boundaries of how we perceive and interact with our environment.",
+    "This project transforms the internal reactions of plants into a dynamic audiovisual experience, highlighting the creative potential of living systems as they generate infinite combinations of data.",
+    "By reinterpreting these natural processes through sound and visuals, the piece fosters a deeper understanding of plants as active, responsive entities, inviting audiences to appreciate their interconnectedness with all life.",
+    "Algorithmic Nature challenges us to envision a future where technology does not just document nature, but collaborates with it, enabling a richer, more immersive engagement with the ecosystem around us."
+  ],
+  "media": [
+    {
+      "type": "image",
+      "src": "media/algolab/algorithmic_nature/algorithmic_nature01.webp",
+      "alt": "Algorithmic Nature"
+    },
+    {
+      "type": "image",
+      "src": "media/algolab/algorithmic_nature/algorithmic_nature02.webp",
+      "alt": "Algorithmic Nature"
+    },
+    {
+      "type": "image",
+      "src": "media/algolab/algorithmic_nature/algorithmic_nature03.webp",
+      "alt": "Algorithmic Nature"
+    },
+    {
+      "type": "image",
+      "src": "media/algolab/algorithmic_nature/algorithmic_nature04.webp",
+      "alt": "Algorithmic Nature"
+    },
+    {
+      "type": "image",
+      "src": "media/algolab/algorithmic_nature/algorithmic_nature05.gif",
+      "alt": "Algorithmic Nature"
+    }
+  ],
+  "tags": [
+    ""
+  ]
+}

@@ -1,0 +1,62 @@
+name: Update Projects Index
+
+on:
+  push:
+    paths:
+      - 'data/projects/*.json'
+      - '!data/projects/_index.json'
+  workflow_dispatch:
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate projects index
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          from pathlib import Path
+
+          projects_dir = Path('data/projects')
+          projects = []
+
+          # Leggi tutti i file JSON nella cartella projects (escluso _index.json)
+          for filepath in sorted(projects_dir.glob('*.json')):
+              if filepath.name == '_index.json':
+                  continue
+              
+              try:
+                  with open(filepath, 'r', encoding='utf-8') as f:
+                      project = json.load(f)
+                      projects.append(project)
+                      print(f"Letto: {filepath.name}")
+              except Exception as e:
+                  print(f"Errore leggendo {filepath.name}: {e}")
+
+          # Ordina per anno (decrescente) e poi per titolo
+          projects.sort(key=lambda p: (-p.get('year', 0), p.get('title', '')))
+
+          # Scrivi l'indice
+          index_path = projects_dir / '_index.json'
+          with open(index_path, 'w', encoding='utf-8') as f:
+              json.dump(projects, f, indent=2, ensure_ascii=False)
+
+          print(f"\nIndice generato con {len(projects)} progetti")
+          EOF
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/projects/_index.json
+          git diff --staged --quiet || git commit -m "chore: update projects index [skip ci]"
+          git push

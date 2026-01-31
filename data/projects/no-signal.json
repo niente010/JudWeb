@@ -1,0 +1,26 @@
+{
+  "slug": "no-signal",
+  "title": "No Signal",
+  "category": "installations",
+  "year": 2025,
+  "description": [
+    "This audiovisual project explores electricity as a living, omniscient entity.",
+    "Through a suspenseful visual narrative, the project redefines our relationship with this invisible energy, presenting it as an omnipresent eye that watches over every aspect of human life.",
+    "With a conceptual approach and tense aesthetic, 'No signal' challenges us to see beyond the everyday, confronting us with the unsettling possibility that the electric force, as familiar as it is feared, is a contemporary god that never ceases to watch."
+  ],
+  "media": [
+    {
+      "type": "image",
+      "src": "media/installations/no_signal/no_signal01.webp",
+      "alt": "No Signal"
+    },
+    {
+      "type": "image",
+      "src": "media/installations/no_signal/no_signal02.webp",
+      "alt": "No Signal"
+    }
+  ],
+  "tags": [
+    ""
+  ]
+}
