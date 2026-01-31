@@ -10,13 +10,25 @@
         "The proposal is built around a hybrid system combining pre-produced visuals with real-time live processing, using generative and reactive effects developed in TouchDesigner, enabling a dynamic and adaptive visual narrative throughout the performance."
       ],
       "media": [
-        { "type": "image", "src": "media/visuals/sauri/sauri01.gif", "alt": "SAURI" },
-        { "type": "image", "src": "media/visuals/sauri/sauri02.gif", "alt": "SAURI" },
-        { "type": "image", "src": "media/visuals/sauri/sauri03.gif", "alt": "SAURI" }
+        {
+          "type": "image",
+          "src": "media/visuals/sauri/sauri01.gif",
+          "alt": "SAURI"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/sauri/sauri02.gif",
+          "alt": "SAURI"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/sauri/sauri03.gif",
+          "alt": "SAURI"
+        }
       ]
     },
     {
-      "slug": "qq+jud",
+      "slug": "qq-jud",
       "title": "Make the Room Talk - QQ + JUD",
       "category": "visuals",
       "year": 2024,
@@ -25,8 +37,16 @@
         "The proposal is built around a hybrid system combining pre-produced visuals with real-time live processing, using generative and reactive effects developed in TouchDesigner, enabling a dynamic and adaptive visual narrative throughout the performance."
       ],
       "media": [
-        { "type": "image", "src": "media/visuals/qq+jud/qq+jud01.gif", "alt": "QQ + JUD" },
-        { "type": "image", "src": "media/visuals/qq+jud/qq+jud02.gif", "alt": "QQ + JUD" }
+        {
+          "type": "image",
+          "src": "media/visuals/qq+jud/qq+jud01.gif",
+          "alt": "QQ + JUD"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/qq+jud/qq+jud02.gif",
+          "alt": "QQ + JUD"
+        }
       ]
     },
     {
@@ -39,27 +59,25 @@
         "A mix between the fluidity of water and the neural connection of the mind."
       ],
       "media": [
-        { "type": "image", "src": "media/visuals/sra_tomasa/sra_tomasa01.gif", "alt": "LA SRA. TOMASA LIVE" },
-        { "type": "image", "src": "media/visuals/sra_tomasa/sra_tomasa02.gif", "alt": "LA SRA. TOMASA LIVE" },
-        { "type": "image", "src": "media/visuals/sra_tomasa/sra_tomasa03.gif", "alt": "LA SRA. TOMASA LIVE" }
+        {
+          "type": "image",
+          "src": "media/visuals/sra_tomasa/sra_tomasa01.gif",
+          "alt": "LA SRA. TOMASA LIVE"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/sra_tomasa/sra_tomasa02.gif",
+          "alt": "LA SRA. TOMASA LIVE"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/sra_tomasa/sra_tomasa03.gif",
+          "alt": "LA SRA. TOMASA LIVE"
+        }
       ],
-      "links": { "site": null, "repo": null },
-      "tags": ["#Touchdesigner, #Particle System, #After Effects, #Audioreactive Visuals"]
-    },
-    {
-      "slug": "vj-canibal",
-      "title": "VJ CANIBAL",
-      "category": "visuals",
-      "year": 2024,
-      "description": [
-        "The adrenaline of live performance is something that, for me, goes hand in hand with being a VJ.",
-        "Enjoying opportunities like this, shooting visuals for what was Canibal in the Sala Apolo.",
-        "Searching in the dark corners of the internet I came up with this visual performance based on a series of drawings from 1997."
-      ],
-      "media": [
-        {}
-      ],
-      "tags": [""]
+      "tags": [
+        "#Touchdesigner, #Particle System, #After Effects, #Audioreactive Visuals"
+      ]
     },
     {
       "slug": "visual-razzmatazz",
@@ -72,13 +90,35 @@
         "Finally, we placed cameras in the booth and in a wide shot, and my colleague, VJ and video technician Ooltraa, and I began our 6-hour B2B on 19 July 2025."
       ],
       "media": [
-        { "type": "image", "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz01.gif", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
-        { "type": "image", "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz02.gif", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
-        { "type": "image", "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz03.gif", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
-        { "type": "image", "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz04.gif", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" },
-        { "type": "image", "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz05.gif", "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ" }
+        {
+          "type": "image",
+          "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz01.gif",
+          "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz02.gif",
+          "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz03.gif",
+          "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz04.gif",
+          "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/b2b_razzmatazz/b2b_razzmatazz05.gif",
+          "alt": "REAL-TIME B2B VISUALS RAZZMATAZZ"
+        }
       ],
-      "tags": ["placeholder"]
+      "tags": [
+        "placeholder"
+      ]
     },
     {
       "slug": "b613-video-mapping",
@@ -89,9 +129,15 @@
         "Creating a living scenography with the design and implementation of a video mapping set for the premiere of the album B-613 by Eloi Canyelles at the Sala Liverpool in Molins de Rey."
       ],
       "media": [
-        {}
+        {
+          "type": "image",
+          "src": "media/visuals/B613.png",
+          "alt": "b613.01"
+        }
       ],
-      "tags": ["#Resolume Arena, #VJ, #After Effects"]
+      "tags": [
+        "#Resolume Arena, #VJ, #After Effects"
+      ]
     },
     {
       "slug": "shared-frequency",
@@ -104,9 +150,12 @@
         "With the brief to create an image for the Naked Spaces project, I created two visual proposals, one following an aesthetic of flashes of light and refraction and the other a 3D element made of audio-reactive particles, presented in their exhibition space at the SEEING, AN EYE AND A BOX fair at Convent Sant Agusti."
       ],
       "media": [
-        { "type": "image", "src": "media/visuals/shared_frequency/shared_frequency01.gif", "alt": "SHARED FREQUENCY" }
-      ],
-      "tags": [""]
+        {
+          "type": "image",
+          "src": "media/visuals/shared_frequency/shared_frequency01.gif",
+          "alt": "SHARED FREQUENCY"
+        }
+      ]
     },
     {
       "slug": "live-son-de-rosas",
@@ -117,13 +166,32 @@
         "A very fun project in which I worked with video editing and AI to capture the essence of La Oreja de Van Gogh and bring dynamism to Son de Rosas' gigs."
       ],
       "media": [
-        { "type": "image", "src": "media/visuals/son_de_rosas/son_de_rosas01.gif", "alt": "LIVE SON DE ROSAS" },
-        { "type": "image", "src": "media/visuals/son_de_rosas/son_de_rosas02.gif", "alt": "LIVE SON DE ROSAS" },
-        { "type": "image", "src": "media/visuals/son_de_rosas/son_de_rosas03.gif", "alt": "LIVE SON DE ROSAS" },
-        { "type": "image", "src": "media/visuals/son_de_rosas/son_de_rosas04.gif", "alt": "LIVE SON DE ROSAS" },
-        { "type": "image", "src": "media/visuals/son_de_rosas/son_de_rosas05.gif", "alt": "LIVE SON DE ROSAS" }
-      ],
-      "tags": [""]
+        {
+          "type": "image",
+          "src": "media/visuals/son_de_rosas/son_de_rosas01.gif",
+          "alt": "LIVE SON DE ROSAS"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/son_de_rosas/son_de_rosas02.gif",
+          "alt": "LIVE SON DE ROSAS"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/son_de_rosas/son_de_rosas03.gif",
+          "alt": "LIVE SON DE ROSAS"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/son_de_rosas/son_de_rosas04.gif",
+          "alt": "LIVE SON DE ROSAS"
+        },
+        {
+          "type": "image",
+          "src": "media/visuals/son_de_rosas/son_de_rosas05.gif",
+          "alt": "LIVE SON DE ROSAS"
+        }
+      ]
     },
     {
       "slug": "algolab-algorithmic-nature",
@@ -137,13 +205,32 @@
         "Algorithmic Nature challenges us to envision a future where technology does not just document nature, but collaborates with it, enabling a richer, more immersive engagement with the ecosystem around us."
       ],
       "media": [
-        { "type": "image", "src": "media/algolab/algorithmic_nature/algorithmic_nature01.webp", "alt": "Algorithmic Nature" },
-        { "type": "image", "src": "media/algolab/algorithmic_nature/algorithmic_nature02.webp", "alt": "Algorithmic Nature" },
-        { "type": "image", "src": "media/algolab/algorithmic_nature/algorithmic_nature03.webp", "alt": "Algorithmic Nature" },
-        { "type": "image", "src": "media/algolab/algorithmic_nature/algorithmic_nature04.webp", "alt": "Algorithmic Nature" },
-        { "type": "image", "src": "media/algolab/algorithmic_nature/algorithmic_nature05.gif", "alt": "Algorithmic Nature" }
-      ],
-      "tags": [""]
+        {
+          "type": "image",
+          "src": "media/algolab/algorithmic_nature/algorithmic_nature01.webp",
+          "alt": "Algorithmic Nature"
+        },
+        {
+          "type": "image",
+          "src": "media/algolab/algorithmic_nature/algorithmic_nature02.webp",
+          "alt": "Algorithmic Nature"
+        },
+        {
+          "type": "image",
+          "src": "media/algolab/algorithmic_nature/algorithmic_nature03.webp",
+          "alt": "Algorithmic Nature"
+        },
+        {
+          "type": "image",
+          "src": "media/algolab/algorithmic_nature/algorithmic_nature04.webp",
+          "alt": "Algorithmic Nature"
+        },
+        {
+          "type": "image",
+          "src": "media/algolab/algorithmic_nature/algorithmic_nature05.gif",
+          "alt": "Algorithmic Nature"
+        }
+      ]
     },
     {
       "slug": "glaciers",
@@ -156,31 +243,43 @@
         "Presented within a gallery or public space, GLACIERS functions both as a reflection of the fragility of glaciers and as a reminder of how technology, consumption, and our everyday decisions directly impact the survival of these vital ecosystems."
       ],
       "media": [
-        { "type": "image", "src": "media/algolab/glaciers/glaciers01.gif", "alt": "Glaciers" },
-        { "type": "image", "src": "media/algolab/glaciers/glaciers02.webp", "alt": "Glaciers" }
-      ],
-      "tags": [""]
+        {
+          "type": "image",
+          "src": "media/algolab/glaciers/glaciers01.gif",
+          "alt": "Glaciers"
+        },
+        {
+          "type": "image",
+          "src": "media/algolab/glaciers/glaciers02.webp",
+          "alt": "Glaciers"
+        }
+      ]
     },
     {
-      "slug": "lost&found",
+      "slug": "lostnfound",
       "title": "Lost & Found",
       "category": "algolab",
       "year": 2025,
       "description": [
-        "Lost&Found is an audiovisual installation that explores the intersection between the vegetal, the material, and the algorithmic. It seeks to ask: Can technology help us reconnect with the nature that surrounds us?",
-        "In an increasingly hyper-mediated and digitally saturated society, Lost&Found turns its attention to the silent and continuous activity of plants — beings that perceive, respond, and communicate in ways we are only beginning to understand.",
-        "At the heart of the installation is a collaboration between organic and synthetic systems. The project captures the inner electrical activity of plants through bioelectrical sensors and translates this data into real-time audiovisual outputs — creating a responsive environment where nature's subtle signals become visible and audible. The result is a living interface, where plants \"speak\" through light and sound.",
-        "Lost&Found invites the audience into a meditative space where they can attune to rhythms that are slower, more continuous, and deeply relational. By foregrounding the agency of plants and interpreting their signals through analog and digital media, we aim to dissolve the binary between nature and machine.",
-        "The installation encourages participants to imagine a present where technology is not a tool of extraction or control, but a means of interconnection and listening.",
-        "Our artistic approach draws from cybernetics, ecological thinking, and new materialism. We are particularly interested in how data — often understood in purely rational or capitalist terms — can instead become a poetic medium that reveals presence, intimacy, and relationality. Lost&Found does not seek to \"decode\" plants, but to co-create with them; it is a space of mutual sensing.",
-        "The project is also a critique of the algorithmic gaze that dominates contemporary life, often reducing complexity to efficiency. Through the use of analog technologies and tactile materials, we create a counter-space where slow time, unpredictability, and sensitivity are honored. In this way, Lost&Found becomes an embodied speculation — a proposition for new forms of intelligence, coexistence, and symbiosis."
+        "Lost&Found is an audiovisual installation that explores the intersection between the vegetal, the material, and the algorithmic. It seeks to ask: Can technology help us reconnect with the nature that surrounds us? In an increasingly hyper-mediated and digitally saturated society, Lost&Found turns its attention to the silent and continuous activity of plants - beings that perceive, respond, and communicate in ways we are only beginning to understand.\n"
       ],
       "media": [
-        { "type": "image", "src": "media/algolab/lostnfound/lostnfound01.webp", "alt": "Lost & Found" },
-        { "type": "image", "src": "media/algolab/lostnfound/lostnfound02.webp", "alt": "Lost & Found" },
-        { "type": "image", "src": "media/algolab/lostnfound/lostnfound03.gif", "alt": "Lost & Found" }
-      ],
-      "tags": [""]
+        {
+          "type": "image",
+          "src": "media/algolab/lostnfound/lostnfound01.webp",
+          "alt": "Lost & Found"
+        },
+        {
+          "type": "image",
+          "src": "media/algolab/lostnfound/lostnfound02.webp",
+          "alt": "Lost & Found"
+        },
+        {
+          "type": "image",
+          "src": "media/algolab/lostnfound/lostnfound03.gif",
+          "alt": "Lost & Found"
+        }
+      ]
     },
     {
       "slug": "universal-remedy",
@@ -188,20 +287,25 @@
       "category": "algolab",
       "year": 2025,
       "description": [
-        "\"The adjustment of reality to the masses and of the masses to reality is a process of unlimited scope, as much for thinking as for perception.\"",
-        "- Walter Benjamin",
-        "Universal Remedy is a conceptual installation that explores the deep entanglement between perception and reality. Drawing from Walter Benjamin's idea that perception is a world-shaping force, the project centres on umwelt, the notion that each living being experiences reality through its unique mode of sensing. From the echolocation of bats to the chemical sensitivity of plants, perception is plural, layered, and specific.",
-        "The installation takes the form of a symbolic sphere composed of eye-like forms drawn from different species, including those without visual organs. Rather than replicating how other beings perceive, the work assembles a poetic constellation of diverse perspectives. The sphere acts as a visual metaphor for multispecies presence, inviting the viewer to imagine a shared world built on perceptual difference.",
-        "Universal Remedy offers a contemplative environment that invites viewers to consider the vast array of perceptual realities that shape life on Earth.  By shifting attention toward unfamiliar ways of engaging with the world, the installation asks what forms of experience we allow to matter.",
-        "While grounded in digital media, the work echoes older knowledge systems, when perception was linked to myth, ecology, and ritual. It imagines a future where ways of seeing and sensing are shared, distributed, and relational.",
-        "The \"remedy\" proposed is not a solution, but a shift toward perception as relation, attention as care, and seeing as mutual presence. It invites us to reimagine perception as a collective and transformative act."
+        "Universal Remedy is a conceptual installation that explores the deep entanglement between perception and reality. Drawing from Walter Benjamin’s idea that perception is a world-shaping force, the project centres on umwelt, the notion that each living being experiences reality through its unique mode of sensing. From the echolocation of bats to the chemical sensitivity of plants, perception is plural, layered, and specific.\n"
       ],
       "media": [
-        { "type": "image", "src": "media/algolab/universal_remedy/universal_remedy01.webp", "alt": "Universal Remedy" },
-        { "type": "image", "src": "media/algolab/universal_remedy/universal_remedy02.gif", "alt": "Universal Remedy" },
-        { "type": "image", "src": "media/algolab/universal_remedy/universal_remedy03.gif", "alt": "Universal Remedy" }
-      ],
-      "tags": [""]
+        {
+          "type": "image",
+          "src": "media/algolab/universal_remedy/universal_remedy01.webp",
+          "alt": "Universal Remedy"
+        },
+        {
+          "type": "image",
+          "src": "media/algolab/universal_remedy/universal_remedy02.gif",
+          "alt": "Universal Remedy"
+        },
+        {
+          "type": "image",
+          "src": "media/algolab/universal_remedy/universal_remedy03.gif",
+          "alt": "Universal Remedy"
+        }
+      ]
     },
     {
       "slug": "light-hole",
@@ -213,11 +317,22 @@
         "By combining DMX technology with audio analysis, The Light Hole emerges as an interactive experience where the user can perceive their own voice in a unique way, regardless of the environment where the installation is located."
       ],
       "media": [
-        { "type": "image", "src": "media/installations/light_hole/light_hole01.webp", "alt": "Light Hole" },
-        { "type": "image", "src": "media/installations/light_hole/light_hole02.webp", "alt": "Light Hole" },
-        { "type": "image", "src": "media/installations/light_hole/light_hole03.webp", "alt": "Light Hole" }
-      ],
-      "tags": [""]
+        {
+          "type": "image",
+          "src": "media/installations/light_hole/light_hole01.webp",
+          "alt": "Light Hole"
+        },
+        {
+          "type": "image",
+          "src": "media/installations/light_hole/light_hole02.webp",
+          "alt": "Light Hole"
+        },
+        {
+          "type": "image",
+          "src": "media/installations/light_hole/light_hole03.webp",
+          "alt": "Light Hole"
+        }
+      ]
     },
     {
       "slug": "no-signal",
@@ -230,10 +345,17 @@
         "With a conceptual approach and tense aesthetic, 'No signal' challenges us to see beyond the everyday, confronting us with the unsettling possibility that the electric force, as familiar as it is feared, is a contemporary god that never ceases to watch."
       ],
       "media": [
-        { "type": "image", "src": "media/installations/no_signal/no_signal01.webp", "alt": "No Signal" },
-        { "type": "image", "src": "media/installations/no_signal/no_signal02.webp", "alt": "No Signal" }
-      ],
-      "tags": [""]
+        {
+          "type": "image",
+          "src": "media/installations/no_signal/no_signal01.webp",
+          "alt": "No Signal"
+        },
+        {
+          "type": "image",
+          "src": "media/installations/no_signal/no_signal02.webp",
+          "alt": "No Signal"
+        }
+      ]
     },
     {
       "slug": "societys-sexuality",
@@ -246,10 +368,17 @@
         "The aim was not just to give them a voice, but to also create a manifesto explaining the existence of sexual diversity and creating an interactive implementation."
       ],
       "media": [
-        { "type": "image", "src": "media/installations/societys_sexuality/societys_sexuality01.webp", "alt": "Society's Sexuality" },
-        { "type": "image", "src": "media/installations/societys_sexuality/societys_sexuality02.webp", "alt": "Society's Sexuality" }
-      ],
-      "tags": [""]
+        {
+          "type": "image",
+          "src": "media/installations/societys_sexuality/societys_sexuality01.webp",
+          "alt": "Society's Sexuality"
+        },
+        {
+          "type": "image",
+          "src": "media/installations/societys_sexuality/societys_sexuality02.webp",
+          "alt": "Society's Sexuality"
+        }
+      ]
     },
     {
       "slug": "the-nest",
@@ -261,11 +390,22 @@
         "As a customised structure, I made a project proposal that included a detailed proposal, customised plans together with materials of the base structure, technical rider of the LED systems and a preview of how the piece would be finally visualised."
       ],
       "media": [
-        { "type": "image", "src": "media/installations/the nest/the_nest01.webp", "alt": "The Nest" },
-        { "type": "image", "src": "media/installations/the nest/the_nest02.webp", "alt": "The Nest" },
-        { "type": "image", "src": "media/installations/the nest/the_nest03.webp", "alt": "The Nest" }
-      ],
-      "tags": [""]
+        {
+          "type": "image",
+          "src": "media/installations/the nest/the_nest01.webp",
+          "alt": "The Nest"
+        },
+        {
+          "type": "image",
+          "src": "media/installations/the nest/the_nest02.webp",
+          "alt": "The Nest"
+        },
+        {
+          "type": "image",
+          "src": "media/installations/the nest/the_nest03.webp",
+          "alt": "The Nest"
+        }
+      ]
     }
   ]
 }
