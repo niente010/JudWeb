@@ -162,13 +162,11 @@
         "alt": "Light Hole"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/installations/light_hole/light_hole03.webp",
-        "alt": "Light Hole"
+        "alt": "Light Hole",
+        "externalLink": "https://www.youtube.com/embed/0g6o3mHgohM?si=isYz--VyfiIMV3BP"
       }
-    ],
-    "tags": [
-      ""
     ]
   },
   {
