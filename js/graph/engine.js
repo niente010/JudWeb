@@ -853,6 +853,19 @@ function drawAboutDescriptionNode(n, i, nodeAlpha, dpr) {
     const tokenizedLines = wrapTextWithHighlightTokens(state.ctx, n.description, maxWidth);
     // Use clean text for box size calculation
     const cleanLines = wrapText(state.ctx, cleanText, maxWidth);
+    
+    // DEBUG: verify line counts match
+    if (!n._debugLogged) {
+      console.log('ABOUT DEBUG:', {
+        tokenizedLinesCount: tokenizedLines.length,
+        cleanLinesCount: cleanLines.length,
+        maxWidth,
+        canvasWidth: state.ctx.canvas.width,
+        dpr
+      });
+      n._debugLogged = true;
+    }
+    
     const boxSize = calculateTextBoxSize(state.ctx, cleanLines, CFG.ABOUT.LINE_HEIGHT, CFG.ABOUT.PADDING);
     
     const isFirstFrame = !n._boxWidth;
