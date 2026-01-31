@@ -15,7 +15,7 @@ media:
 content:
   # Progetti del Portfolio
   - name: projects
-    label: Progetti
+    label: Projects
     path: data/projects.json
     type: file
     format: json
@@ -25,8 +25,8 @@ content:
         type: object
         list:
           collapsible:
-            collapsed: true
-            summary: "{title} ({category} - {year})"
+            collapsed: false
+            summary: "{fields.title} ({fields.category} - {fields.year})"
         fields:
           - name: slug
             label: Slug (URL)
@@ -38,13 +38,13 @@ content:
               message: "Lo slug deve contenere solo lettere minuscole, numeri e trattini"
 
           - name: title
-            label: Titolo
+            label: Title
             type: string
             required: true
             description: Nome del progetto
 
           - name: category
-            label: Categoria
+            label: Category
             type: select
             required: true
             options:
@@ -58,13 +58,13 @@ content:
             description: Categoria del progetto
 
           - name: year
-            label: Anno
+            label: Year
             type: number
             required: true
             description: Anno di realizzazione del progetto
 
           - name: description
-            label: Descrizione
+            label: Description
             type: text
             list: true
             required: true
@@ -78,13 +78,13 @@ content:
             description: Immagini e video del progetto
             fields:
               - name: type
-                label: Tipo
+                label: Type
                 type: select
                 required: true
                 options:
                   values:
                     - value: image
-                      label: Immagine
+                      label: Image
                     - value: video
                       label: Video
                 default: image
@@ -93,18 +93,18 @@ content:
                 label: File
                 type: image
                 required: true
-                description: Carica l'immagine o il video
+                description: Upload an image or video
 
               - name: alt
-                label: Testo alternativo
+                label: Alternative text
                 type: string
                 required: true
-                description: Descrizione dell'immagine per accessibilità
+                description: Alternative text for accessibility
 
           - name: links
-            label: Link esterni
+            label: External links
             type: object
-            description: Link opzionali al sito web o repository
+            description: Optional links
             fields:
               - name: site
                 label: Sito Web
@@ -137,24 +137,24 @@ content:
 
   # Contatti
   - name: contacts
-    label: Contatti
+    label: Contacts
     path: data/contacts.json
     type: file
     format: json
     fields:
       - name: items
-        label: Lista Contatti
+        label: Contacts List
         type: object
         list:
           collapsible:
-            collapsed: true
-            summary: "{name}"
+            collapsed: false
+            summary: "{fields.name}"
         fields:
           - name: name
             label: Nome
             type: string
             required: true
-            description: Nome del contatto (es. Instagram, Email)
+            description: Name of the contact (e.g. Instagram, Email)
 
           - name: slug
             label: Slug
@@ -163,10 +163,10 @@ content:
             description: Identificatore univoco
             pattern:
               regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-              message: "Lo slug deve contenere solo lettere minuscole, numeri e trattini"
+              message: "The slug must contain only lowercase letters, numbers and hyphens"
 
           - name: url
             label: URL
             type: string
             required: true
-            description: Link al profilo o indirizzo email (mailto:)
+            description: Link to the profile or email address (mailto:)
