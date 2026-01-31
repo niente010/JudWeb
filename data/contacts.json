@@ -1,18 +1,19 @@
-[
-  {
-    "name": "Instagram",
-    "slug": "instagram",
-    "url": "https://www.instagram.com/judbernalt/"
-  },
-  {
-    "name": "Instagram Algolab",
-    "slug": "instagram-algolab",
-    "url": "https://www.instagram.com/algolab01/"
-  },
-  {
-    "name": "email",
-    "slug": "email",
-    "url": "mailto:judbernalt@gmail.com"
-  }
-]
-
+{
+  "items": [
+    {
+      "name": "Instagram",
+      "slug": "instagram",
+      "url": "https://www.instagram.com/judbernalt/"
+    },
+    {
+      "name": "Instagram Algolab",
+      "slug": "instagram-algolab",
+      "url": "https://www.instagram.com/algolab01/"
+    },
+    {
+      "name": "email",
+      "slug": "email",
+      "url": "mailto:judbernalt@gmail.com"
+    }
+  ]
+}
