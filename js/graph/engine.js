@@ -809,8 +809,11 @@ function drawDescriptionNode(n, i, nodeAlpha, dpr) {
   if (n.description) {
     // Calculate responsive max width based on canvas size
     const maxWidth = state.ctx.canvas.width * CFG.DESCRIPTION.TEXT_MAX_WIDTH_RATIO;
-    const wrappedLines = wrapText(state.ctx, n.description, maxWidth);
-    const boxSize = calculateTextBoxSize(state.ctx, wrappedLines, CFG.DESCRIPTION.LINE_HEIGHT, CFG.DESCRIPTION.PADDING);
+    // Use wrapTextWithHighlights to preserve markers for rendering
+    const wrappedLines = wrapTextWithHighlights(state.ctx, n.description, maxWidth);
+    // Use clean lines for box size calculation
+    const cleanLines = wrapText(state.ctx, n.description, maxWidth);
+    const boxSize = calculateTextBoxSize(state.ctx, cleanLines, CFG.DESCRIPTION.LINE_HEIGHT, CFG.DESCRIPTION.PADDING);
     
     const isFirstFrame = !n._boxWidth;
     if (!n._boxWidth || n._boxWidth !== boxSize.width) {
@@ -826,8 +829,8 @@ function drawDescriptionNode(n, i, nodeAlpha, dpr) {
     const { dx, dy } = getDescriptionBoxPosition(n);
     state.ctx.textBaseline = "top";
     const startY = dy + CFG.DESCRIPTION.PADDING;
-    wrappedLines.forEach((line, i) => {
-      state.ctx.fillText(line, dx + CFG.DESCRIPTION.PADDING, startY + i * CFG.DESCRIPTION.LINE_HEIGHT);
+    wrappedLines.forEach((line, idx) => {
+      drawHighlightedLine(state.ctx, line, dx + CFG.DESCRIPTION.PADDING, startY + idx * CFG.DESCRIPTION.LINE_HEIGHT, dpr);
     });
   }
   state.ctx.restore();
@@ -842,8 +845,11 @@ function drawAboutDescriptionNode(n, i, nodeAlpha, dpr) {
   if (n.description) {
     // Calculate responsive max width based on canvas size
     const maxWidth = state.ctx.canvas.width * CFG.DESCRIPTION.TEXT_MAX_WIDTH_RATIO;
-    const wrappedLines = wrapText(state.ctx, n.description, maxWidth);
-    const boxSize = calculateTextBoxSize(state.ctx, wrappedLines, CFG.DESCRIPTION.LINE_HEIGHT, CFG.DESCRIPTION.PADDING);
+    // Use wrapTextWithHighlights to preserve markers for rendering
+    const wrappedLines = wrapTextWithHighlights(state.ctx, n.description, maxWidth);
+    // Use clean lines for box size calculation
+    const cleanLines = wrapText(state.ctx, n.description, maxWidth);
+    const boxSize = calculateTextBoxSize(state.ctx, cleanLines, CFG.DESCRIPTION.LINE_HEIGHT, CFG.DESCRIPTION.PADDING);
     
     const isFirstFrame = !n._boxWidth;
     if (!n._boxWidth || n._boxWidth !== boxSize.width) {
@@ -861,8 +867,8 @@ function drawAboutDescriptionNode(n, i, nodeAlpha, dpr) {
     
     state.ctx.textBaseline = "top";
     const startY = dy + CFG.DESCRIPTION.PADDING;
-    wrappedLines.forEach((line, i) => {
-      state.ctx.fillText(line, dx + CFG.DESCRIPTION.PADDING, startY + i * CFG.DESCRIPTION.LINE_HEIGHT);
+    wrappedLines.forEach((line, idx) => {
+      drawHighlightedLine(state.ctx, line, dx + CFG.DESCRIPTION.PADDING, startY + idx * CFG.DESCRIPTION.LINE_HEIGHT, dpr);
     });
   }
   state.ctx.restore();
@@ -1117,8 +1123,40 @@ export function measureTextWidth(text, fontSize = 16) {
   return w;
 }
 
+// Parse text with ==highlight== markers into segments
+export function parseHighlightedText(text) {
+  const segments = [];
+  const regex = /==([^=]+)==/g;
+  let lastIndex = 0;
+  let match;
+  
+  while ((match = regex.exec(text)) !== null) {
+    // Add text before the match (if any)
+    if (match.index > lastIndex) {
+      segments.push({ text: text.slice(lastIndex, match.index), highlighted: false });
+    }
+    // Add the highlighted text
+    segments.push({ text: match[1], highlighted: true });
+    lastIndex = regex.lastIndex;
+  }
+  
+  // Add remaining text after last match
+  if (lastIndex < text.length) {
+    segments.push({ text: text.slice(lastIndex), highlighted: false });
+  }
+  
+  return segments;
+}
+
+// Get plain text without highlight markers (for measuring)
+export function stripHighlightMarkers(text) {
+  return text.replace(/==([^=]+)==/g, '$1');
+}
+
 export function wrapText(context, text, maxWidth) {
-  const paragraphs = text.split('\n');
+  // Strip highlight markers for proper word wrapping measurement
+  const cleanText = stripHighlightMarkers(text);
+  const paragraphs = cleanText.split('\n');
   const lines = [];
   
   for (const paragraph of paragraphs) {
@@ -1148,6 +1186,68 @@ export function wrapText(context, text, maxWidth) {
   }
   
   return lines;
+}
+
+// Wrap text preserving highlight markers for rendering
+export function wrapTextWithHighlights(context, text, maxWidth) {
+  const paragraphs = text.split('\n');
+  const lines = [];
+  
+  for (const paragraph of paragraphs) {
+    if (paragraph.trim() === '') {
+      lines.push('');
+      continue;
+    }
+    
+    // Split by spaces but preserve highlight markers
+    const words = paragraph.split(' ');
+    let currentLine = '';
+    
+    for (const word of words) {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      // Measure without markers
+      const cleanTestLine = stripHighlightMarkers(testLine);
+      const metrics = context.measureText(cleanTestLine);
+      
+      if (metrics.width > maxWidth && currentLine) {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+    
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+  }
+  
+  return lines;
+}
+
+// Draw a line of text with highlight support
+export function drawHighlightedLine(ctx, line, x, y, dpr) {
+  const segments = parseHighlightedText(line);
+  let currentX = x;
+  
+  for (const segment of segments) {
+    const textWidth = ctx.measureText(segment.text).width;
+    
+    if (segment.highlighted) {
+      // Draw highlight background (green bg, black text)
+      const padding = 2 * dpr;
+      const fontSize = CFG.DESCRIPTION.FONT_SIZE * dpr;
+      ctx.fillStyle = CFG.COLOR; // green
+      ctx.fillRect(currentX - padding, y - fontSize + padding, textWidth + padding * 2, fontSize + padding);
+      ctx.fillStyle = '#000000'; // black text
+      ctx.fillText(segment.text, currentX, y);
+      ctx.fillStyle = CFG.COLOR; // restore green
+    } else {
+      ctx.fillText(segment.text, currentX, y);
+    }
+    
+    currentX += textWidth;
+  }
 }
 
 export function calculateTextBoxSize(context, lines, lineHeight, padding) {
