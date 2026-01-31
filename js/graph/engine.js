@@ -809,10 +809,12 @@ function drawDescriptionNode(n, i, nodeAlpha, dpr) {
   if (n.description) {
     // Calculate responsive max width based on canvas size
     const maxWidth = state.ctx.canvas.width * CFG.DESCRIPTION.TEXT_MAX_WIDTH_RATIO;
+    // Strip markers for consistent line wrapping
+    const cleanText = stripHighlightMarkers(n.description);
     // Get tokenized lines for rendering with highlights
     const tokenizedLines = wrapTextWithHighlightTokens(state.ctx, n.description, maxWidth);
-    // Use clean lines for box size calculation
-    const cleanLines = wrapText(state.ctx, n.description, maxWidth);
+    // Use clean text for box size calculation
+    const cleanLines = wrapText(state.ctx, cleanText, maxWidth);
     const boxSize = calculateTextBoxSize(state.ctx, cleanLines, CFG.DESCRIPTION.LINE_HEIGHT, CFG.DESCRIPTION.PADDING);
     
     const isFirstFrame = !n._boxWidth;
@@ -840,16 +842,18 @@ function drawAboutDescriptionNode(n, i, nodeAlpha, dpr) {
   state.ctx.save();
   state.ctx.globalAlpha = nodeAlpha;
   state.ctx.fillStyle = CFG.COLOR;
-  state.ctx.font = `${CFG.DESCRIPTION.FONT_SIZE * dpr}px StraightNarrow, sans-serif`;
+  state.ctx.font = `${CFG.ABOUT.FONT_SIZE * dpr}px StraightNarrow, sans-serif`;
   
   if (n.description) {
-    // Calculate responsive max width based on canvas size
-    const maxWidth = state.ctx.canvas.width * CFG.DESCRIPTION.TEXT_MAX_WIDTH_RATIO;
+    // Calculate responsive max width based on canvas size - use ABOUT config
+    const maxWidth = state.ctx.canvas.width * CFG.ABOUT.TEXT_MAX_WIDTH_RATIO;
+    // Strip markers for consistent line wrapping
+    const cleanText = stripHighlightMarkers(n.description);
     // Get tokenized lines for rendering with highlights
     const tokenizedLines = wrapTextWithHighlightTokens(state.ctx, n.description, maxWidth);
-    // Use clean lines for box size calculation
-    const cleanLines = wrapText(state.ctx, n.description, maxWidth);
-    const boxSize = calculateTextBoxSize(state.ctx, cleanLines, CFG.DESCRIPTION.LINE_HEIGHT, CFG.DESCRIPTION.PADDING);
+    // Use clean text for box size calculation
+    const cleanLines = wrapText(state.ctx, cleanText, maxWidth);
+    const boxSize = calculateTextBoxSize(state.ctx, cleanLines, CFG.ABOUT.LINE_HEIGHT, CFG.ABOUT.PADDING);
     
     const isFirstFrame = !n._boxWidth;
     if (!n._boxWidth || n._boxWidth !== boxSize.width) {
@@ -866,9 +870,9 @@ function drawAboutDescriptionNode(n, i, nodeAlpha, dpr) {
     const dy = n.y - n._boxHeight / 2;
     
     state.ctx.textBaseline = "top";
-    const startY = dy + CFG.DESCRIPTION.PADDING;
+    const startY = dy + CFG.ABOUT.PADDING;
     tokenizedLines.forEach((tokens, idx) => {
-      drawHighlightedTokens(state.ctx, tokens, dx + CFG.DESCRIPTION.PADDING, startY + idx * CFG.DESCRIPTION.LINE_HEIGHT, dpr);
+      drawHighlightedTokens(state.ctx, tokens, dx + CFG.ABOUT.PADDING, startY + idx * CFG.ABOUT.LINE_HEIGHT, dpr, CFG.ABOUT.FONT_SIZE);
     });
   }
   state.ctx.restore();
@@ -1143,8 +1147,8 @@ export function tokenizeWithHighlights(text) {
       continue;
     }
     
-    // Check for space (word boundary)
-    if (text[i] === ' ') {
+    // Check for space or newline (word boundary)
+    if (text[i] === ' ' || text[i] === '\n') {
       if (currentWord) {
         tokens.push({ word: currentWord, highlighted: inHighlight });
         currentWord = '';
@@ -1205,63 +1209,49 @@ export function wrapText(context, text, maxWidth) {
 }
 
 // Wrap text into lines, each line is array of tokens with highlight info
+// Uses wrapText for consistent line breaks, then tokenizes each line
 export function wrapTextWithHighlightTokens(context, text, maxWidth) {
-  const paragraphs = text.split('\n');
-  const result = [];
+  // Use clean text (without markers) for wrapping to match box calculation
+  const cleanText = stripHighlightMarkers(text);
+  const cleanLines = wrapText(context, cleanText, maxWidth);
   
-  for (const paragraph of paragraphs) {
-    if (paragraph.trim() === '') {
+  // Tokenize the entire original text to get words with highlight info
+  const allTokens = tokenizeWithHighlights(text);
+  // Filter out spaces and newline-related tokens, keep only actual words
+  const allWords = allTokens.filter(t => !t.isSpace && t.word.trim() !== '');
+  
+  const result = [];
+  let wordIndex = 0;
+  
+  for (const cleanLine of cleanLines) {
+    if (cleanLine === '') {
+      // Empty line (paragraph break)
       result.push([]);
       continue;
     }
     
-    const tokens = tokenizeWithHighlights(paragraph);
-    let currentLine = [];
-    let currentLineWidth = 0;
+    // Count words in this clean line
+    const cleanWords = cleanLine.split(' ').filter(w => w !== '');
+    const lineTokens = [];
     
-    for (const token of tokens) {
-      if (token.isSpace) {
-        const spaceWidth = context.measureText(' ').width;
-        if (currentLine.length > 0) {
-          currentLine.push(token);
-          currentLineWidth += spaceWidth;
-        }
-        continue;
+    for (let i = 0; i < cleanWords.length && wordIndex < allWords.length; i++) {
+      if (i > 0) {
+        lineTokens.push({ word: ' ', highlighted: false, isSpace: true });
       }
-      
-      const wordWidth = context.measureText(token.word).width;
-      const spaceWidth = currentLine.length > 0 ? context.measureText(' ').width : 0;
-      
-      if (currentLineWidth + spaceWidth + wordWidth > maxWidth && currentLine.length > 0) {
-        // Remove trailing space if any
-        if (currentLine.length > 0 && currentLine[currentLine.length - 1].isSpace) {
-          currentLine.pop();
-        }
-        result.push(currentLine);
-        currentLine = [token];
-        currentLineWidth = wordWidth;
-      } else {
-        currentLine.push(token);
-        currentLineWidth += spaceWidth + wordWidth;
-      }
+      lineTokens.push(allWords[wordIndex]);
+      wordIndex++;
     }
     
-    if (currentLine.length > 0) {
-      // Remove trailing space if any
-      if (currentLine[currentLine.length - 1].isSpace) {
-        currentLine.pop();
-      }
-      result.push(currentLine);
-    }
+    result.push(lineTokens);
   }
   
   return result;
 }
 
 // Draw a line of tokens with highlight support
-export function drawHighlightedTokens(ctx, tokens, x, y, dpr) {
+export function drawHighlightedTokens(ctx, tokens, x, y, dpr, fontSizeBase = CFG.DESCRIPTION.FONT_SIZE) {
   let currentX = x;
-  const fontSize = CFG.DESCRIPTION.FONT_SIZE * dpr;
+  const fontSize = fontSizeBase * dpr;
   const padding = 3 * dpr;
   
   for (const token of tokens) {

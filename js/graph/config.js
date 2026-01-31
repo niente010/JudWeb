@@ -110,6 +110,16 @@ export const TEXT = {
   PADDING: 20 // space between text and corner brackets
 };
 
+// About section specific formatting
+export const ABOUT = {
+  TEXT_MAX_WIDTH_RATIO: 0.52, // wider than project descriptions (0.45)
+  FONT_SIZE: 14,
+  LINE_HEIGHT: 40,
+  PADDING: 18,
+  // Position offset from center (as ratio of canvas height)
+  Y_OFFSET: 0.12 // positive = lower on screen
+};
+
 // Typography
 export const FONTS = {
   MAIN: 16, // px base (scaled by DPR)

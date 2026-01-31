@@ -232,7 +232,8 @@ export function createAboutDescriptionNode(text, mainIndex) {
   const canvasHeight = state.ctx.canvas.height;
   
   let anchorX = canvasWidth / 2;
-  let anchorY = canvasHeight / 2;
+  // Apply Y offset from config to position text lower
+  let anchorY = canvasHeight / 2 + (canvasHeight * CFG.ABOUT.Y_OFFSET);
   
   return {
     kind: "aboutDescription",
