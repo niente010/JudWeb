@@ -30,12 +30,10 @@
       "alt": "Algorithmic Nature"
     },
     {
-      "type": "image",
+      "type": "video",
       "src": "media/algolab/algorithmic_nature/algorithmic_nature05.gif",
-      "alt": "Algorithmic Nature"
+      "alt": "Algorithmic Nature",
+      "externalLink": "www.youtube.com/embed/tBBGDfdQyE8?si=yXp-NhC1XV3bSZfF"
     }
-  ],
-  "tags": [
-    ""
   ]
 }
