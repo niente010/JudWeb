@@ -41,6 +41,20 @@
     ]
   },
   {
+    "slug": "b613-video-mapping",
+    "title": "B-613 VIDEO MAPPING",
+    "category": "visuals",
+    "description": [
+      "Creating a living scenography with the design and implementation of a video mapping set for the premiere of the album B-613 by Eloi Canyelles at the Sala Liverpool in Molins de Rey."
+    ],
+    "media": [
+      {}
+    ],
+    "tags": [
+      "#Resolume Arena, #VJ, #After Effects"
+    ]
+  },
+  {
     "slug": "glaciers",
     "title": "Glaciers",
     "category": "algolab",
@@ -63,178 +77,6 @@
     ],
     "tags": [
       ""
-    ]
-  },
-  {
-    "slug": "light-hole",
-    "title": "Light Hole",
-    "category": "installations",
-    "description": [
-      "This project is defined as a game of illusions between light and sound.",
-      "By combining DMX technology with audio analysis, The Light Hole emerges as an interactive experience where the user can perceive their own voice in a unique way, regardless of the environment where the installation is located."
-    ],
-    "media": [
-      {
-        "type": "image",
-        "src": "media/installations/light_hole/light_hole01.webp",
-        "alt": "Light Hole"
-      },
-      {
-        "type": "image",
-        "src": "media/installations/light_hole/light_hole02.webp",
-        "alt": "Light Hole"
-      },
-      {
-        "type": "image",
-        "src": "media/installations/light_hole/light_hole03.webp",
-        "alt": "Light Hole"
-      }
-    ],
-    "tags": [
-      ""
-    ]
-  },
-  {
-    "slug": "lostnfound",
-    "title": "Lost & Found",
-    "category": "algolab",
-    "description": [
-      "Lost&Found is an audiovisual installation that explores the intersection between the vegetal, the material, and the algorithmic. It seeks to ask: Can technology help us reconnect with the nature that surrounds us? In an increasingly hyper-mediated and digitally saturated society, Lost&Found turns its attention to the silent and continuous activity of plants - beings that perceive, respond, and communicate in ways we are only beginning to understand."
-    ],
-    "media": [
-      {
-        "type": "image",
-        "src": "media/algolab/lostnfound/lostnfound01.webp",
-        "alt": "Lost & Found"
-      },
-      {
-        "type": "image",
-        "src": "media/algolab/lostnfound/lostnfound02.webp",
-        "alt": "Lost & Found"
-      },
-      {
-        "type": "image",
-        "src": "media/algolab/lostnfound/lostnfound03.gif",
-        "alt": "Lost & Found"
-      }
-    ]
-  },
-  {
-    "slug": "no-signal",
-    "title": "No Signal",
-    "category": "installations",
-    "description": [
-      "This audiovisual project explores electricity as a living, omniscient entity.",
-      "Through a suspenseful visual narrative, the project redefines our relationship with this invisible energy, presenting it as an omnipresent eye that watches over every aspect of human life.",
-      "With a conceptual approach and tense aesthetic, 'No signal' challenges us to see beyond the everyday, confronting us with the unsettling possibility that the electric force, as familiar as it is feared, is a contemporary god that never ceases to watch."
-    ],
-    "media": [
-      {
-        "type": "image",
-        "src": "media/installations/no_signal/no_signal01.webp",
-        "alt": "No Signal"
-      },
-      {
-        "type": "image",
-        "src": "media/installations/no_signal/no_signal02.webp",
-        "alt": "No Signal"
-      }
-    ],
-    "tags": [
-      ""
-    ]
-  },
-  {
-    "slug": "societys-sexuality",
-    "title": "Society's Sexuality",
-    "category": "installations",
-    "description": [
-      "Society can be tough and damaging to certain people that do not adjust to the standards that the culture and society expects from them.",
-      "In this project, a voice wanted to be given to these people that had not fit in due to their sexual orientation and, as a result, had an identity crisis from having been discriminated against.",
-      "The aim was not just to give them a voice, but to also create a manifesto explaining the existence of sexual diversity and creating an interactive implementation."
-    ],
-    "media": [
-      {
-        "type": "image",
-        "src": "media/installations/societys_sexuality/societys_sexuality01.webp",
-        "alt": "Society's Sexuality"
-      },
-      {
-        "type": "image",
-        "src": "media/installations/societys_sexuality/societys_sexuality02.webp",
-        "alt": "Society's Sexuality"
-      }
-    ],
-    "tags": [
-      ""
-    ]
-  },
-  {
-    "slug": "the-nest",
-    "title": "The Nest",
-    "category": "installations",
-    "description": [
-      "The Nest is a new corporate identity party organiser based in Castellbisbal.",
-      "As a customised structure, I made a project proposal that included a detailed proposal, customised plans together with materials of the base structure, technical rider of the LED systems and a preview of how the piece would be finally visualised."
-    ],
-    "media": [
-      {
-        "type": "image",
-        "src": "media/installations/the nest/the_nest01.webp",
-        "alt": "The Nest"
-      },
-      {
-        "type": "image",
-        "src": "media/installations/the nest/the_nest02.webp",
-        "alt": "The Nest"
-      },
-      {
-        "type": "image",
-        "src": "media/installations/the nest/the_nest03.webp",
-        "alt": "The Nest"
-      }
-    ],
-    "tags": [
-      ""
-    ]
-  },
-  {
-    "slug": "universal-remedy",
-    "title": "Universal Remedy",
-    "category": "algolab",
-    "description": [
-      "Universal Remedy is a conceptual installation that explores the deep entanglement between perception and reality. Drawing from Walter Benjamin's idea that perception is a world-shaping force, the project centres on umwelt, the notion that each living being experiences reality through its unique mode of sensing. From the echolocation of bats to the chemical sensitivity of plants, perception is plural, layered, and specific.\n"
-    ],
-    "media": [
-      {
-        "type": "image",
-        "src": "media/algolab/universal_remedy/universal_remedy01.webp",
-        "alt": "Universal Remedy"
-      },
-      {
-        "type": "image",
-        "src": "media/algolab/universal_remedy/universal_remedy02.gif",
-        "alt": "Universal Remedy"
-      },
-      {
-        "type": "image",
-        "src": "media/algolab/universal_remedy/universal_remedy03.gif",
-        "alt": "Universal Remedy"
-      }
-    ]
-  },
-  {
-    "slug": "b613-video-mapping",
-    "title": "B-613 VIDEO MAPPING",
-    "category": "visuals",
-    "description": [
-      "Creating a living scenography with the design and implementation of a video mapping set for the premiere of the album B-613 by Eloi Canyelles at the Sala Liverpool in Molins de Rey."
-    ],
-    "media": [
-      {}
-    ],
-    "tags": [
-      "#Resolume Arena, #VJ, #After Effects"
     ]
   },
   {
@@ -305,6 +147,60 @@
     ]
   },
   {
+    "slug": "light-hole",
+    "title": "Light Hole",
+    "category": "installations",
+    "description": [
+      "This project is defined as a game of illusions between light and sound.",
+      "By combining DMX technology with audio analysis, The Light Hole emerges as an interactive experience where the user can perceive their own voice in a unique way, regardless of the environment where the installation is located."
+    ],
+    "media": [
+      {
+        "type": "image",
+        "src": "media/installations/light_hole/light_hole01.webp",
+        "alt": "Light Hole"
+      },
+      {
+        "type": "image",
+        "src": "media/installations/light_hole/light_hole02.webp",
+        "alt": "Light Hole"
+      },
+      {
+        "type": "image",
+        "src": "media/installations/light_hole/light_hole03.webp",
+        "alt": "Light Hole"
+      }
+    ],
+    "tags": [
+      ""
+    ]
+  },
+  {
+    "slug": "lostnfound",
+    "title": "Lost & Found",
+    "category": "algolab",
+    "description": [
+      "Lost&Found is an audiovisual installation that explores the intersection between the vegetal, the material, and the algorithmic. It seeks to ask: Can technology help us reconnect with the nature that surrounds us? In an increasingly hyper-mediated and digitally saturated society, Lost&Found turns its attention to the silent and continuous activity of plants - beings that perceive, respond, and communicate in ways we are only beginning to understand."
+    ],
+    "media": [
+      {
+        "type": "image",
+        "src": "media/algolab/lostnfound/lostnfound01.webp",
+        "alt": "Lost & Found"
+      },
+      {
+        "type": "image",
+        "src": "media/algolab/lostnfound/lostnfound02.webp",
+        "alt": "Lost & Found"
+      },
+      {
+        "type": "image",
+        "src": "media/algolab/lostnfound/lostnfound03.gif",
+        "alt": "Lost & Found"
+      }
+    ]
+  },
+  {
     "slug": "qq+jud",
     "title": "Make the Room Talk - QQ + JUD",
     "category": "visuals",
@@ -323,6 +219,31 @@
         "src": "media/visuals/qq+jud/qq+jud02.gif",
         "alt": "QQ + JUD"
       }
+    ]
+  },
+  {
+    "slug": "no-signal",
+    "title": "No Signal",
+    "category": "installations",
+    "description": [
+      "This audiovisual project explores electricity as a living, omniscient entity.",
+      "Through a suspenseful visual narrative, the project redefines our relationship with this invisible energy, presenting it as an omnipresent eye that watches over every aspect of human life.",
+      "With a conceptual approach and tense aesthetic, 'No signal' challenges us to see beyond the everyday, confronting us with the unsettling possibility that the electric force, as familiar as it is feared, is a contemporary god that never ceases to watch."
+    ],
+    "media": [
+      {
+        "type": "image",
+        "src": "media/installations/no_signal/no_signal01.webp",
+        "alt": "No Signal"
+      },
+      {
+        "type": "image",
+        "src": "media/installations/no_signal/no_signal02.webp",
+        "alt": "No Signal"
+      }
+    ],
+    "tags": [
+      ""
     ]
   },
   {
@@ -405,6 +326,85 @@
         "type": "image",
         "src": "media/visuals/shared_frequency/shared_frequency01.gif",
         "alt": "SHARED FREQUENCY"
+      }
+    ]
+  },
+  {
+    "slug": "societys-sexuality",
+    "title": "Society's Sexuality",
+    "category": "installations",
+    "description": [
+      "Society can be tough and damaging to certain people that do not adjust to the standards that the culture and society expects from them.",
+      "In this project, a voice wanted to be given to these people that had not fit in due to their sexual orientation and, as a result, had an identity crisis from having been discriminated against.",
+      "The aim was not just to give them a voice, but to also create a manifesto explaining the existence of sexual diversity and creating an interactive implementation."
+    ],
+    "media": [
+      {
+        "type": "image",
+        "src": "media/installations/societys_sexuality/societys_sexuality01.webp",
+        "alt": "Society's Sexuality"
+      },
+      {
+        "type": "image",
+        "src": "media/installations/societys_sexuality/societys_sexuality02.webp",
+        "alt": "Society's Sexuality"
+      }
+    ],
+    "tags": [
+      ""
+    ]
+  },
+  {
+    "slug": "the-nest",
+    "title": "The Nest",
+    "category": "installations",
+    "description": [
+      "The Nest is a new corporate identity party organiser based in Castellbisbal.",
+      "As a customised structure, I made a project proposal that included a detailed proposal, customised plans together with materials of the base structure, technical rider of the LED systems and a preview of how the piece would be finally visualised."
+    ],
+    "media": [
+      {
+        "type": "image",
+        "src": "media/installations/the nest/the_nest01.webp",
+        "alt": "The Nest"
+      },
+      {
+        "type": "image",
+        "src": "media/installations/the nest/the_nest02.webp",
+        "alt": "The Nest"
+      },
+      {
+        "type": "image",
+        "src": "media/installations/the nest/the_nest03.webp",
+        "alt": "The Nest"
+      }
+    ],
+    "tags": [
+      ""
+    ]
+  },
+  {
+    "slug": "universal-remedy",
+    "title": "Universal Remedy",
+    "category": "algolab",
+    "description": [
+      "Universal Remedy is a conceptual installation that explores the deep entanglement between perception and reality. Drawing from Walter Benjamin’s idea that perception is a world-shaping force, the project centres on umwelt, the notion that each living being experiences reality through its unique mode of sensing. From the echolocation of bats to the chemical sensitivity of plants, perception is plural, layered, and specific.\n"
+    ],
+    "media": [
+      {
+        "type": "image",
+        "src": "media/algolab/universal_remedy/universal_remedy01.webp",
+        "alt": "Universal Remedy"
+      },
+      {
+        "type": "image",
+        "src": "media/algolab/universal_remedy/universal_remedy02.gif",
+        "alt": "Universal Remedy"
+      },
+      {
+        "type": "image",
+        "src": "media/algolab/universal_remedy/universal_remedy03.gif",
+        "alt": "Universal Remedy"
       }
     ]
   }
