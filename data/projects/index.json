@@ -63,18 +63,16 @@
     ],
     "media": [
       {
-        "type": "image",
+        "type": "video",
         "src": "media/algolab/glaciers/glaciers01.gif",
-        "alt": "Glaciers"
+        "alt": "Glaciers",
+        "externalLink": "https://www.youtube.com/embed/rlRbx4vAJmI?si=VNlDFPoiTOHhEGsT"
       },
       {
         "type": "image",
         "src": "media/algolab/glaciers/glaciers02.webp",
         "alt": "Glaciers"
       }
-    ],
-    "tags": [
-      ""
     ]
   },
   {
