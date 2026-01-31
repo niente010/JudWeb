@@ -31,7 +31,11 @@ export const state = {
   hoveredNodeIndex: -1,
   draggedNodeIndex: -1,
   dragOffsetX: 0,
-  dragOffsetY: 0
+  dragOffsetY: 0,
+  
+  // Gallery mode
+  galleryMode: false,
+  galleryMediaIndex: -1
 };
 
 // Helper to check if a node can resume movement after hover

@@ -17,6 +17,14 @@
     <canvas id="graph-canvas" class="graph-canvas" aria-hidden="true"></canvas>
     <!-- Container for animated GIFs (above canvas, below cursor) -->
     <div id="gif-overlay" class="gif-overlay"></div>
+    <!-- Gallery overlay (fullscreen lightbox for media) -->
+    <div id="gallery-overlay" class="gallery-overlay" hidden>
+      <div class="gallery-backdrop"></div>
+      <div class="gallery-content">
+        <div class="gallery-media-container"></div>
+        <div class="gallery-caption"></div>
+      </div>
+    </div>
     <!-- Cursor overlay (drawn above everything, click-through) -->
     <canvas id="cursor-canvas" class="cursor-canvas" aria-hidden="true"></canvas>
 

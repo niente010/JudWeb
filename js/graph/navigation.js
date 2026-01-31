@@ -173,6 +173,7 @@ export function createMediaNode(mediaItem, projectIndex, mediaIndex, totalMediaC
     mediaType: mediaItem.type,
     mediaSrc: mediaItem.src,
     mediaAlt: mediaItem.alt,
+    externalLink: mediaItem.externalLink || null,
     projectIndex,
     mediaIndex,
     x: baseX,
@@ -420,6 +421,94 @@ export async function enterAboutMode(mainIndex) {
   }
 }
 
+// ============= GALLERY MODE =============
+
+export function enterGalleryMode(mediaNodeIndex) {
+  const mediaNode = state.nodes[mediaNodeIndex];
+  if (!mediaNode || mediaNode.kind !== "media") return;
+  
+  state.galleryMode = true;
+  state.galleryMediaIndex = mediaNodeIndex;
+  showGalleryOverlay(mediaNode);
+}
+
+export function exitGalleryMode() {
+  state.galleryMode = false;
+  state.galleryMediaIndex = -1;
+  hideGalleryOverlay();
+}
+
+function showGalleryOverlay(mediaNode) {
+  const overlay = document.getElementById('gallery-overlay');
+  if (!overlay) return;
+  
+  const container = overlay.querySelector('.gallery-media-container');
+  const caption = overlay.querySelector('.gallery-caption');
+  
+  // Clear previous content
+  container.innerHTML = '';
+  
+  // Create wrapper for bottom bracket corners
+  const wrapper = document.createElement('div');
+  wrapper.className = 'gallery-media-wrapper';
+  wrapper.style.position = 'relative';
+  
+  if (mediaNode.mediaType === 'video' && mediaNode.externalLink) {
+    // YouTube embed for video type
+    const iframe = document.createElement('iframe');
+    iframe.src = mediaNode.externalLink + '?autoplay=1';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+    wrapper.appendChild(iframe);
+  } else {
+    // Image (including GIF previews)
+    const img = document.createElement('img');
+    img.src = mediaNode.mediaSrc;
+    img.alt = mediaNode.mediaAlt || '';
+    wrapper.appendChild(img);
+  }
+  
+  container.appendChild(wrapper);
+  
+  // Set caption from alt text
+  caption.textContent = mediaNode.mediaAlt || '';
+  
+  // Show overlay
+  overlay.hidden = false;
+}
+
+function hideGalleryOverlay() {
+  const overlay = document.getElementById('gallery-overlay');
+  if (!overlay) return;
+  
+  const container = overlay.querySelector('.gallery-media-container');
+  // Clear content to stop video playback
+  container.innerHTML = '';
+  
+  overlay.hidden = true;
+}
+
+export function setupGalleryListeners() {
+  const overlay = document.getElementById('gallery-overlay');
+  if (!overlay) return;
+  
+  const backdrop = overlay.querySelector('.gallery-backdrop');
+  
+  // Click on backdrop closes gallery
+  backdrop?.addEventListener('click', () => {
+    if (state.galleryMode) {
+      exitGalleryMode();
+    }
+  });
+  
+  // ESC key closes gallery
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && state.galleryMode) {
+      exitGalleryMode();
+    }
+  });
+}
+
 // ============= MOBILE DETECTION =============
 
 function isMobileDevice() {
@@ -497,7 +586,11 @@ function handlePointerDown(e, canvas) {
     handleGrandchildClick(n, idx);
   }
   
-  if (n.kind === "description" || n.kind === "aboutDescription" || n.kind === "media") {
+  if (n.kind === "media") {
+    // Click on media enters gallery mode
+    enterGalleryMode(idx);
+    e.preventDefault();
+  } else if (n.kind === "description" || n.kind === "aboutDescription") {
     startDrag(idx, x, y);
     e.preventDefault();
   }

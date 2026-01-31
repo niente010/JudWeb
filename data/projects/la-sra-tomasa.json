@@ -2,7 +2,6 @@
   "slug": "la-sra-tomasa",
   "title": "LA SRA.TOMASA LIVE",
   "category": "visuals",
-  "year": 2024,
   "description": [
     "BÉbeme is the song by the Catalan band, La Sra. Tomasa, for which this visual was customised based on reactive coordinates to the audio input.",
     "A mix between the fluidity of water and the neural connection of the mind."
@@ -24,10 +23,6 @@
       "alt": "LA SRA. TOMASA LIVE"
     }
   ],
-  "links": {
-    "site": null,
-    "repo": null
-  },
   "tags": [
     "#Touchdesigner, #Particle System, #After Effects, #Audioreactive Visuals"
   ]

@@ -1,6 +1,6 @@
 // Graph visualization - Public API
 import { state, step, draw, computeMainAnchors, clamp, cleanupGifElements } from './graph/engine.js';
-import { setupInteraction, createMainNode } from './graph/navigation.js';
+import { setupInteraction, createMainNode, setupGalleryListeners } from './graph/navigation.js';
 import * as CFG from './graph/config.js';
 
 export function startGraph(canvas) {
@@ -43,6 +43,9 @@ export function startGraph(canvas) {
   
   // Setup interaction handlers
   setupInteraction(canvas);
+  
+  // Setup gallery mode listeners (ESC key, backdrop click)
+  setupGalleryListeners();
   
   // Start animation loop
   state.lastTimestamp = performance.now();
