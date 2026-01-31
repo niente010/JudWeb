@@ -809,8 +809,8 @@ function drawDescriptionNode(n, i, nodeAlpha, dpr) {
   if (n.description) {
     // Calculate responsive max width based on canvas size
     const maxWidth = state.ctx.canvas.width * CFG.DESCRIPTION.TEXT_MAX_WIDTH_RATIO;
-    // Use wrapTextWithHighlights to preserve markers for rendering
-    const wrappedLines = wrapTextWithHighlights(state.ctx, n.description, maxWidth);
+    // Get tokenized lines for rendering with highlights
+    const tokenizedLines = wrapTextWithHighlightTokens(state.ctx, n.description, maxWidth);
     // Use clean lines for box size calculation
     const cleanLines = wrapText(state.ctx, n.description, maxWidth);
     const boxSize = calculateTextBoxSize(state.ctx, cleanLines, CFG.DESCRIPTION.LINE_HEIGHT, CFG.DESCRIPTION.PADDING);
@@ -829,8 +829,8 @@ function drawDescriptionNode(n, i, nodeAlpha, dpr) {
     const { dx, dy } = getDescriptionBoxPosition(n);
     state.ctx.textBaseline = "top";
     const startY = dy + CFG.DESCRIPTION.PADDING;
-    wrappedLines.forEach((line, idx) => {
-      drawHighlightedLine(state.ctx, line, dx + CFG.DESCRIPTION.PADDING, startY + idx * CFG.DESCRIPTION.LINE_HEIGHT, dpr);
+    tokenizedLines.forEach((tokens, idx) => {
+      drawHighlightedTokens(state.ctx, tokens, dx + CFG.DESCRIPTION.PADDING, startY + idx * CFG.DESCRIPTION.LINE_HEIGHT, dpr);
     });
   }
   state.ctx.restore();
@@ -845,8 +845,8 @@ function drawAboutDescriptionNode(n, i, nodeAlpha, dpr) {
   if (n.description) {
     // Calculate responsive max width based on canvas size
     const maxWidth = state.ctx.canvas.width * CFG.DESCRIPTION.TEXT_MAX_WIDTH_RATIO;
-    // Use wrapTextWithHighlights to preserve markers for rendering
-    const wrappedLines = wrapTextWithHighlights(state.ctx, n.description, maxWidth);
+    // Get tokenized lines for rendering with highlights
+    const tokenizedLines = wrapTextWithHighlightTokens(state.ctx, n.description, maxWidth);
     // Use clean lines for box size calculation
     const cleanLines = wrapText(state.ctx, n.description, maxWidth);
     const boxSize = calculateTextBoxSize(state.ctx, cleanLines, CFG.DESCRIPTION.LINE_HEIGHT, CFG.DESCRIPTION.PADDING);
@@ -867,8 +867,8 @@ function drawAboutDescriptionNode(n, i, nodeAlpha, dpr) {
     
     state.ctx.textBaseline = "top";
     const startY = dy + CFG.DESCRIPTION.PADDING;
-    wrappedLines.forEach((line, idx) => {
-      drawHighlightedLine(state.ctx, line, dx + CFG.DESCRIPTION.PADDING, startY + idx * CFG.DESCRIPTION.LINE_HEIGHT, dpr);
+    tokenizedLines.forEach((tokens, idx) => {
+      drawHighlightedTokens(state.ctx, tokens, dx + CFG.DESCRIPTION.PADDING, startY + idx * CFG.DESCRIPTION.LINE_HEIGHT, dpr);
     });
   }
   state.ctx.restore();
@@ -1123,29 +1123,45 @@ export function measureTextWidth(text, fontSize = 16) {
   return w;
 }
 
-// Parse text with ==highlight== markers into segments
-export function parseHighlightedText(text) {
-  const segments = [];
-  const regex = /==([^=]+)==/g;
-  let lastIndex = 0;
-  let match;
+// Parse text into word tokens with highlight info
+// Returns array of { word: string, highlighted: boolean }
+export function tokenizeWithHighlights(text) {
+  const tokens = [];
+  let inHighlight = false;
+  let currentWord = '';
   
-  while ((match = regex.exec(text)) !== null) {
-    // Add text before the match (if any)
-    if (match.index > lastIndex) {
-      segments.push({ text: text.slice(lastIndex, match.index), highlighted: false });
+  for (let i = 0; i < text.length; i++) {
+    // Check for == marker
+    if (text[i] === '=' && text[i + 1] === '=') {
+      // Save current word if any
+      if (currentWord) {
+        tokens.push({ word: currentWord, highlighted: inHighlight });
+        currentWord = '';
+      }
+      inHighlight = !inHighlight;
+      i++; // Skip second =
+      continue;
     }
-    // Add the highlighted text
-    segments.push({ text: match[1], highlighted: true });
-    lastIndex = regex.lastIndex;
+    
+    // Check for space (word boundary)
+    if (text[i] === ' ') {
+      if (currentWord) {
+        tokens.push({ word: currentWord, highlighted: inHighlight });
+        currentWord = '';
+      }
+      tokens.push({ word: ' ', highlighted: false, isSpace: true });
+      continue;
+    }
+    
+    currentWord += text[i];
   }
   
-  // Add remaining text after last match
-  if (lastIndex < text.length) {
-    segments.push({ text: text.slice(lastIndex), highlighted: false });
+  // Don't forget last word
+  if (currentWord) {
+    tokens.push({ word: currentWord, highlighted: inHighlight });
   }
   
-  return segments;
+  return tokens;
 }
 
 // Get plain text without highlight markers (for measuring)
@@ -1188,62 +1204,83 @@ export function wrapText(context, text, maxWidth) {
   return lines;
 }
 
-// Wrap text preserving highlight markers for rendering
-export function wrapTextWithHighlights(context, text, maxWidth) {
+// Wrap text into lines, each line is array of tokens with highlight info
+export function wrapTextWithHighlightTokens(context, text, maxWidth) {
   const paragraphs = text.split('\n');
-  const lines = [];
+  const result = [];
   
   for (const paragraph of paragraphs) {
     if (paragraph.trim() === '') {
-      lines.push('');
+      result.push([]);
       continue;
     }
     
-    // Split by spaces but preserve highlight markers
-    const words = paragraph.split(' ');
-    let currentLine = '';
+    const tokens = tokenizeWithHighlights(paragraph);
+    let currentLine = [];
+    let currentLineWidth = 0;
     
-    for (const word of words) {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      // Measure without markers
-      const cleanTestLine = stripHighlightMarkers(testLine);
-      const metrics = context.measureText(cleanTestLine);
+    for (const token of tokens) {
+      if (token.isSpace) {
+        const spaceWidth = context.measureText(' ').width;
+        if (currentLine.length > 0) {
+          currentLine.push(token);
+          currentLineWidth += spaceWidth;
+        }
+        continue;
+      }
       
-      if (metrics.width > maxWidth && currentLine) {
-        lines.push(currentLine);
-        currentLine = word;
+      const wordWidth = context.measureText(token.word).width;
+      const spaceWidth = currentLine.length > 0 ? context.measureText(' ').width : 0;
+      
+      if (currentLineWidth + spaceWidth + wordWidth > maxWidth && currentLine.length > 0) {
+        // Remove trailing space if any
+        if (currentLine.length > 0 && currentLine[currentLine.length - 1].isSpace) {
+          currentLine.pop();
+        }
+        result.push(currentLine);
+        currentLine = [token];
+        currentLineWidth = wordWidth;
       } else {
-        currentLine = testLine;
+        currentLine.push(token);
+        currentLineWidth += spaceWidth + wordWidth;
       }
     }
     
-    if (currentLine) {
-      lines.push(currentLine);
+    if (currentLine.length > 0) {
+      // Remove trailing space if any
+      if (currentLine[currentLine.length - 1].isSpace) {
+        currentLine.pop();
+      }
+      result.push(currentLine);
     }
   }
   
-  return lines;
+  return result;
 }
 
-// Draw a line of text with highlight support
-export function drawHighlightedLine(ctx, line, x, y, dpr) {
-  const segments = parseHighlightedText(line);
+// Draw a line of tokens with highlight support
+export function drawHighlightedTokens(ctx, tokens, x, y, dpr) {
   let currentX = x;
+  const fontSize = CFG.DESCRIPTION.FONT_SIZE * dpr;
+  const padding = 3 * dpr;
   
-  for (const segment of segments) {
-    const textWidth = ctx.measureText(segment.text).width;
+  for (const token of tokens) {
+    const textWidth = ctx.measureText(token.word).width;
     
-    if (segment.highlighted) {
+    if (token.highlighted && !token.isSpace) {
       // Draw highlight background (green bg, black text)
-      const padding = 2 * dpr;
-      const fontSize = CFG.DESCRIPTION.FONT_SIZE * dpr;
-      ctx.fillStyle = CFG.COLOR; // green
-      ctx.fillRect(currentX - padding, y - fontSize + padding, textWidth + padding * 2, fontSize + padding);
+      ctx.fillStyle = CFG.COLOR; // green background
+      ctx.fillRect(
+        currentX - padding/2, 
+        y - padding/2, 
+        textWidth + padding, 
+        fontSize + padding
+      );
       ctx.fillStyle = '#000000'; // black text
-      ctx.fillText(segment.text, currentX, y);
-      ctx.fillStyle = CFG.COLOR; // restore green
+      ctx.fillText(token.word, currentX, y);
+      ctx.fillStyle = CFG.COLOR; // restore green for next tokens
     } else {
-      ctx.fillText(segment.text, currentX, y);
+      ctx.fillText(token.word, currentX, y);
     }
     
     currentX += textWidth;
