@@ -372,18 +372,16 @@
         "alt": "The Nest"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/installations/the nest/the_nest02.webp",
-        "alt": "The Nest"
+        "alt": "The Nest",
+        "externalLink": "https://youtu.be/HkRfy_kFVuM?si=8Ect4GgkUFBbY0fi"
       },
       {
         "type": "image",
         "src": "media/installations/the nest/the_nest03.webp",
         "alt": "The Nest"
       }
-    ],
-    "tags": [
-      ""
     ]
   },
   {
