@@ -400,14 +400,16 @@
         "alt": "Universal Remedy"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/algolab/universal_remedy/universal_remedy02.gif",
-        "alt": "Universal Remedy"
+        "alt": "Universal Remedy",
+        "externalLink": "https://www.youtube.com/embed/cRfAzYW1liY?si=7C8t0Cf2q4MW0bKE"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/algolab/universal_remedy/universal_remedy03.gif",
-        "alt": "Universal Remedy"
+        "alt": "Universal Remedy",
+        "externalLink": "https://www.youtube.com/embed/NB9QL8n07kk?si=PTW-UyzNi60vlop2"
       }
     ]
   }
