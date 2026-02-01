@@ -8,14 +8,14 @@
   ],
   "media": [
     {
-      "type": "image",
-      "src": "media/visuals/qq+jud/qq_jud01.gif",
+      "type": "video",
+      "src": "media/visuals/qq_jud/qq_jud01.gif",
       "alt": "QQ + JUD",
       "externalLink": "https://www.youtube.com/embed/amnHe0lqvwY?si=h0eC83OtXgeIjdwx"
     },
     {
-      "type": "image",
-      "src": "media/visuals/qq+jud/qq_jud02.gif",
+      "type": "video",
+      "src": "media/visuals/qq_jud/qq_jud02.gif",
       "alt": "QQ + JUD https://www.youtube.com/embed/amnHe0lqvwY?si=h0eC83OtXgeIjdwx",
       "externalLink": "https://www.youtube.com/embed/Hke56Qh6rig?si=pNARhdNKa6tYaTdE"
     }
