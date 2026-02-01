@@ -303,14 +303,15 @@
         "alt": "SAURI"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/visuals/sauri/sauri02.gif",
         "alt": "SAURI"
       },
       {
-        "type": "image",
+        "type": "video",
         "src": "media/visuals/sauri/sauri03.gif",
-        "alt": "SAURI"
+        "alt": "SAURI",
+        "externalLink": "https://www.youtube.com/embed/anygjeD7V1w?si=6Zy0xE1ptWGSwrIo"
       }
     ]
   },
