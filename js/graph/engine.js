@@ -740,7 +740,6 @@ function drawNode(n, i, dpr) {
   const renderers = {
     description: () => drawDescriptionNode(n, i, nodeAlpha, dpr),
     aboutDescription: () => drawAboutDescriptionNode(n, i, nodeAlpha, dpr),
-    textContent: () => drawTextContentNode(n, i, nodeAlpha, dpr),
     media: () => drawMediaNode(n, i, nodeAlpha, dpr)
   };
   
@@ -1115,12 +1114,6 @@ export function hitTestAtScreen(px, py) {
         const dx = n.x - n._boxWidth / 2;
         const dy = n.y - n._boxHeight / 2;
         if (px >= dx && px <= dx + n._boxWidth && py >= dy && py <= dy + n._boxHeight) return i;
-      }
-    } else if (n.kind === "textContent") {
-      if (n._boxWidth && n._boxHeight) {
-        const tx = screenX - n._boxWidth / 2;
-        const ty = n.y - n._boxHeight / 2;
-        if (px >= tx && px <= tx + n._boxWidth && py >= ty && py <= ty + n._boxHeight) return i;
       }
     } else if (n.kind === "media") {
       const baseWidth = n._imageWidth || CFG.MEDIA.SIZE;

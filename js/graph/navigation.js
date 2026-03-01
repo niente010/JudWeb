@@ -250,6 +250,35 @@ export function createAboutDescriptionNode(text, mainIndex) {
   };
 }
 
+export function createTextContentNode(text, parentIndex, url = null) {
+  const canvasWidth = state.ctx.canvas.width;
+  const canvasHeight = state.ctx.canvas.height;
+  const bounds = getBounds(canvasWidth, canvasHeight);
+
+  const parent = state.nodes[parentIndex];
+  // Position CV node to the right of the ABOUT main node
+  let x = parent ? parent.x + canvasWidth * 0.18 : canvasWidth * 0.7;
+  let y = parent ? parent.y : canvasHeight * 0.3;
+  const clamped = clampToBounds(x, y, bounds);
+
+  return {
+    kind: "textContent",
+    text,
+    // Use label so it renders like other nodes (rect + label on the right)
+    label: text,
+    parentIndex,
+    url,
+    x: clamped.x,
+    y: clamped.y,
+    vx: 0,
+    vy: 0,
+    // Small timer so physics engine will assign wandering targets (oscillation)
+    targetTimer: 0.5,
+    targetX: clamped.x,
+    targetY: clamped.y,
+  };
+}
+
 // ============= NAVIGATION FUNCTIONS =============
 
 export function resetToHome() {
@@ -416,6 +445,12 @@ export async function enterAboutMode(mainIndex) {
     const aboutData = await loadAbout();
     const aboutNode = createAboutDescriptionNode(aboutData.text, mainIndex);
     state.nodes.push(aboutNode);
+
+    // Optional dynamic CV node, driven by CMS data (about.json)
+    if (aboutData.cvUrl) {
+      const cvNode = createTextContentNode("CV", mainIndex, aboutData.cvUrl);
+      state.nodes.push(cvNode);
+    }
   } catch (e) {
     console.error('Error loading about data:', e);
   }
@@ -680,6 +715,13 @@ function handlePointerDown(e, canvas) {
     handleChildClick(n, idx);
   } else if (n.kind === "grandchild") {
     handleGrandchildClick(n, idx);
+  } else if (n.kind === "textContent") {
+    // Text content node acts as a link (e.g. CV)
+    if (n.url) {
+      window.open(n.url, '_blank');
+      e.preventDefault();
+      return;
+    }
   }
   
   if (n.kind === "media") {
@@ -821,7 +863,7 @@ function handleDrag(x, y, rect) {
   const cssScaleX = rect.width / state.ctx.canvas.width;
   const cssScaleY = rect.height / state.ctx.canvas.height;
   
-  if (draggedNode.kind === "description" || draggedNode.kind === "aboutDescription" || draggedNode.kind === "textContent") {
+  if (draggedNode.kind === "description" || draggedNode.kind === "aboutDescription") {
     if (draggedNode._boxWidth && draggedNode._boxHeight) {
       const center = draggedNode.kind === "description" 
         ? getDescriptionBoxCenter(draggedNode)
@@ -899,7 +941,7 @@ function updateHoverBox(n, hitIndex, rect) {
   const cssScaleX = rect.width / state.ctx.canvas.width;
   const cssScaleY = rect.height / state.ctx.canvas.height;
   
-  if (n.kind === "description" || n.kind === "aboutDescription" || n.kind === "textContent") {
+  if (n.kind === "description" || n.kind === "aboutDescription") {
     if (n._boxWidth && n._boxHeight) {
       const center = n.kind === "description"
         ? getDescriptionBoxCenter(n)
