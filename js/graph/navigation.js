@@ -438,6 +438,34 @@ export function exitGalleryMode() {
   hideGalleryOverlay();
 }
 
+// Navigate to previous/next media item in the current project gallery
+function stepGallery(offset) {
+  if (!state.galleryMode) return;
+  const currentNode = state.nodes[state.galleryMediaIndex];
+  if (!currentNode || currentNode.kind !== "media") return;
+
+  // Collect all media nodes for the currently selected project
+  const mediaNodes = state.nodes
+    .map((node, idx) => ({ node, idx }))
+    .filter(({ node }) => node.kind === "media" && node.projectIndex === state.selectedProjectIndex)
+    .sort((a, b) => {
+      const ai = typeof a.node.mediaIndex === "number" ? a.node.mediaIndex : 0;
+      const bi = typeof b.node.mediaIndex === "number" ? b.node.mediaIndex : 0;
+      return ai - bi;
+    });
+
+  if (!mediaNodes.length) return;
+
+  const currentPos = mediaNodes.findIndex(({ node }) => node === currentNode);
+  if (currentPos === -1) return;
+
+  const nextPos = (currentPos + offset + mediaNodes.length) % mediaNodes.length;
+  const { node: nextNode, idx: nextIdx } = mediaNodes[nextPos];
+
+  state.galleryMediaIndex = nextIdx;
+  showGalleryOverlay(nextNode);
+}
+
 function showGalleryOverlay(mediaNode) {
   const overlay = document.getElementById('gallery-overlay');
   if (!overlay) return;
@@ -495,6 +523,8 @@ export function setupGalleryListeners() {
   if (!overlay) return;
   
   const backdrop = overlay.querySelector('.gallery-backdrop');
+  let pinchStartDistance = null;
+  let pinchHandled = false;
   
   // Click on backdrop closes gallery
   backdrop?.addEventListener('click', () => {
@@ -503,12 +533,76 @@ export function setupGalleryListeners() {
     }
   });
   
-  // ESC key closes gallery
+  // Keyboard controls in gallery mode:
+  // - ESC closes gallery
+  // - ArrowLeft / ArrowRight navigate between media of the current project
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && state.galleryMode) {
+    if (!state.galleryMode) return;
+
+    if (e.key === 'Escape') {
       exitGalleryMode();
+      return;
+    }
+
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      stepGallery(1);
+      return;
+    }
+
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      stepGallery(-1);
+      return;
     }
   });
+
+  // Trackpad / mouse zoom-out gesture closes gallery.
+  // On desktop browsers, pinch-to-zoom is exposed as a wheel event with ctrlKey=true.
+  overlay.addEventListener('wheel', (e) => {
+    if (!state.galleryMode) return;
+    if (!e.ctrlKey) return;
+    // Treat any ctrl+wheel as an intent to zoom the page and close the gallery instead.
+    e.preventDefault();
+    exitGalleryMode();
+  }, { passive: false });
+
+  // Mobile pinch-in (zoom out) gesture closes the gallery.
+  // We detect a two-finger pinch where the distance between touches shrinks
+  // beyond a threshold relative to the initial distance.
+  overlay.addEventListener('touchstart', (e) => {
+    if (!state.galleryMode) return;
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      pinchStartDistance = Math.hypot(dx, dy);
+      pinchHandled = false;
+    }
+  }, { passive: true });
+
+  overlay.addEventListener('touchmove', (e) => {
+    if (!state.galleryMode) return;
+    if (pinchHandled) return;
+    if (e.touches.length !== 2 || !pinchStartDistance) return;
+
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const currentDistance = Math.hypot(dx, dy);
+
+    // Pinch-in (zoom-out) → distance decreases compared to start
+    const ZOOM_OUT_THRESHOLD = 0.8; // 20% shrink
+    if (currentDistance < pinchStartDistance * ZOOM_OUT_THRESHOLD) {
+      e.preventDefault();
+      pinchHandled = true;
+      pinchStartDistance = null;
+      exitGalleryMode();
+    }
+  }, { passive: false });
+
+  overlay.addEventListener('touchend', () => {
+    pinchStartDistance = null;
+    pinchHandled = false;
+  }, { passive: true });
 }
 
 // ============= MOBILE DETECTION =============
